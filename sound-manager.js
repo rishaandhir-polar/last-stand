@@ -7,6 +7,7 @@ class SoundManager {
         this.sounds = {};
         this.musicMuted = false;
         this.sfxMuted = false;
+        this.legacySounds = {}; // For file:// compatibility
     }
 
     async resume() {
@@ -16,7 +17,6 @@ class SoundManager {
     }
 
     async loadAllSounds() {
-        // Using lowercase 'sounds/' for cross-platform (Linux/GitHub Pages) compatibility
         const soundFiles = {
             pistol: 'sounds/pistol.mp3',
             shotgun: 'sounds/shotgun.mp3',
@@ -30,33 +30,44 @@ class SoundManager {
         };
 
         for (const [name, url] of Object.entries(soundFiles)) {
-            await this.loadSound(name, url);
+            // Load for both Web Audio (High Performance) and Legacy (file:// compatibility)
+            this.legacySounds[name] = new Audio(url);
+            this.loadSound(name, url);
         }
     }
 
     async loadSound(name, url) {
+        if (window.location.protocol === 'file:') return; // Skip fetch on file://
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const arrayBuffer = await response.arrayBuffer();
             this.sounds[name] = await this.ctx.decodeAudioData(arrayBuffer);
-            console.log(`Loaded sound: ${name}`);
         } catch (e) {
-            console.warn("Failed to load sound:", name, url, e);
-            // Fallback to synth sounds if file loading fails
+            console.warn("WebAudio loading failed, will use legacy fallback for:", name);
         }
     }
 
     play(name, volume = 0.5) {
-        if (this.sfxMuted || !this.sounds[name]) return;
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        const source = this.ctx.createBufferSource();
-        source.buffer = this.sounds[name];
-        const gain = this.ctx.createGain();
-        gain.gain.value = volume;
-        gain.connect(this.masterGain);
-        source.connect(gain);
-        source.start(0);
+        if (this.sfxMuted) return;
+
+        // Priority 1: Web Audio (Lowest Latency, Overlapping)
+        if (this.sounds[name]) {
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+            const source = this.ctx.createBufferSource();
+            source.buffer = this.sounds[name];
+            const gain = this.ctx.createGain();
+            gain.gain.value = volume;
+            gain.connect(this.masterGain);
+            source.connect(gain);
+            source.start(0);
+        }
+        // Priority 2: Legacy Audio (Works on file://)
+        else if (this.legacySounds[name]) {
+            const clone = this.legacySounds[name].cloneNode();
+            clone.volume = volume * this.masterGain.gain.value;
+            clone.play().catch(() => { });
+        }
     }
 
     playFile(name, volume) {
@@ -64,26 +75,14 @@ class SoundManager {
     }
 
     shoot(weapon) {
-        if (weapon === 'ar') {
-            if (this.sounds.rifle) this.play('rifle', 0.1);
-            else this.playSynth(440, 0.05, 'square');
-        } else if (weapon === 'shotgun') {
-            if (this.sounds.shotgun) this.play('shotgun', 0.3);
-            else this.playSynth(110, 0.1, 'sawtooth');
-        } else if (weapon === 'pistol') {
-            if (this.sounds.pistol) this.play('pistol', 0.2);
-            else this.playSynth(220, 0.05, 'sine');
-        } else if (weapon === 'sniper') {
-            if (this.sounds.sniper) this.play('sniper', 0.4);
-            else this.playSynth(330, 0.1, 'sine');
-        } else if (weapon === 'flamethrower') {
-            if (this.sounds.flamethrower) this.play('flamethrower', 0.1);
-        }
+        const weaponMap = { 'ar': 'rifle', 'shotgun': 'shotgun', 'pistol': 'pistol', 'sniper': 'sniper', 'flamethrower': 'flamethrower' };
+        const soundName = weaponMap[weapon] || 'pistol';
+        const volumes = { 'rifle': 0.1, 'shotgun': 0.3, 'pistol': 0.2, 'sniper': 0.4, 'flamethrower': 0.1 };
+        this.play(soundName, volumes[soundName]);
     }
 
     explode() {
-        if (this.sounds.explosion) this.play('explosion', 0.5);
-        else this.playSynth(50, 0.3, 'sawtooth');
+        this.play('explosion', 0.5);
     }
 
     click() {
