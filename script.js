@@ -16,7 +16,7 @@
         GAME.updateHUD(state);
 
         // Auto-Update Logic
-        GAME.currentVersion = "1.0.2";
+        GAME.currentVersion = "1.0.3";
         const checkForUpdates = async () => {
             try {
                 const response = await fetch('app-version.json?t=' + Date.now());

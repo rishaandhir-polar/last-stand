@@ -78,6 +78,20 @@ GAME.setupInput = function (state) {
 };
 
 GAME.setupMobileControls = function (state) {
+    // Touch-to-Aim Logic (Multitouch aware)
+    const updateAim = (e) => {
+        for (let i = 0; i < e.touches.length; i++) {
+            const touch = e.touches[i];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (target && !target.closest('.mobile-btn') && !target.closest('#joystick-area')) {
+                state.player.angle = Math.atan2(touch.clientY - state.player.y, touch.clientX - state.player.x);
+                break;
+            }
+        }
+    };
+    window.addEventListener('touchstart', updateAim, { passive: false });
+    window.addEventListener('touchmove', updateAim, { passive: false });
+
     const dashBtn = document.getElementById('mobile-dash-btn');
     if (dashBtn) {
         dashBtn.addEventListener('touchstart', (e) => { e.preventDefault(); state.keys[' '] = true; });
