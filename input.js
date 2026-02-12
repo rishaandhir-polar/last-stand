@@ -1,6 +1,7 @@
 GAME.setupInput = function (state) {
     let cheatBuffer = "";
     window.addEventListener('keydown', e => {
+        if (e.repeat) return;
         // Cheat Code Logic
         cheatBuffer += e.key.toLowerCase();
         if (cheatBuffer.endsWith("idkfa")) {
