@@ -19,7 +19,9 @@ GAME.state = {
     gameOver: false,
     isMobile: false, mobileInput: { x: 0, y: 0, active: false },
     controlMode: 'mouse',
-    selectedTurret: null
+    selectedTurret: null,
+    buildMode: null,
+    buildRotation: 0
 };
 
 GAME.updateState = function (updates) {

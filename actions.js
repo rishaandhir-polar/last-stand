@@ -98,10 +98,16 @@ GAME.placeBuild = function (state) {
         else if (state.buildMode === 'landmine') state.mines.push({ x: mouseX, y: mouseY });
         else if (state.buildMode === 'spike') state.spikes.push({ x: mouseX, y: mouseY });
         else state.walls.push({ x: mouseX, y: mouseY, hp: cost, maxHp: cost, type: state.buildMode, rotation: buildRotation });
+
         player.money -= cost;
-        state.buildMode = null;
         GAME.soundManager.click();
         GAME.updateHUD(state);
+
+        // Check if money for ANOTHER one
+        if (player.money < cost) {
+            state.buildMode = null;
+            GAME.showNotification("OUT OF MONEY", "Insufficient funds for another structure.");
+        }
     }
 };
 

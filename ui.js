@@ -22,7 +22,7 @@ GAME.showNotification = function (title, message) {
     if (titleEl) titleEl.innerText = title;
     if (msgEl) msgEl.innerText = message;
     area.classList.remove('hidden');
-    setTimeout(() => area.classList.add('hidden'), 5000);
+    setTimeout(() => area.classList.add('hidden'), 2000);
 };
 
 GAME.openShop = function (state) {

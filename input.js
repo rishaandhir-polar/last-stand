@@ -1,7 +1,9 @@
 GAME.setupInput = function (state) {
     window.addEventListener('keydown', e => {
         state.keys[e.key] = true;
-        if (e.key === 'r' || e.key === 'R') state.buildRotation = (state.buildRotation + Math.PI / 2) % Math.PI;
+        if (e.key === 'r' || e.key === 'R') {
+            state.buildRotation = ((state.buildRotation || 0) + Math.PI / 2);
+        }
         if (e.key === '1') state.player.weapon = 'pistol';
         if (e.key === '2' && state.player.unlockedWeapons.includes('shotgun')) state.player.weapon = 'shotgun';
         if (e.key === '2' && state.player.unlockedWeapons.includes('ar')) state.player.weapon = 'ar';
@@ -32,7 +34,12 @@ GAME.setupInput = function (state) {
             else if (state.buildMode) window.dispatchEvent(new CustomEvent('place-build'));
             else { state.isFiring = true; window.dispatchEvent(new CustomEvent('player-shoot')); }
         }
-        if (e.button === 2) state.buildMode = null;
+        if (e.button === 2) {
+            if (state.buildMode) {
+                state.buildMode = null;
+                GAME.openShop(state);
+            }
+        }
     });
 
     window.addEventListener('mouseup', e => { if (e.button === 0) state.isFiring = false; });
