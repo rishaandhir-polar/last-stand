@@ -76,6 +76,7 @@ GAME.buy = function (state, type) {
 };
 
 GAME.nextWave = function (state) {
+    if (state.waveInProgress) return;
     GAME.closeShop();
     state.wave++;
     state.waveInProgress = true;
@@ -83,6 +84,21 @@ GAME.nextWave = function (state) {
     if (state.wave % 5 === 0) GAME.spawnBoss(state);
     else state.zombiesToSpawn = 5 + Math.floor(state.wave * 1.5);
     GAME.updateHUD(state);
+};
+
+GAME.forfeit = function (state) {
+    state.zombies = [];
+    state.bullets = [];
+    state.enemyBullets = [];
+    state.particles = [];
+    state.zombiesToSpawn = 0;
+    state.waveInProgress = false;
+    state.player.hp = state.player.maxHp;
+    if (state.lastWaveMoney !== undefined) state.player.money = state.lastWaveMoney;
+    GAME.closeShop();
+    GAME.openShop(state);
+    GAME.updateHUD(state);
+    GAME.showNotification("FORFEIT", "Wave cancelled. Money reset.");
 };
 
 GAME.placeBuild = function (state) {

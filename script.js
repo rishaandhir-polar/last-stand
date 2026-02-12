@@ -59,7 +59,8 @@
     // Global functions for HTML onclicks
     window.buy = (type) => GAME.buy(GAME.state, type);
     window.nextWave = () => GAME.nextWave(GAME.state);
-    window.openShop = () => GAME.openShop(GAME.state);
+    window.forfeit = () => { GAME.forfeit(GAME.state); GAME.toggleSettings(); };
+    window.openShop = () => { GAME.openShop(GAME.state); document.getElementById('settings-menu').classList.add('hidden'); };
     window.upgradeTurret = (type) => GAME.upgradeTurret(GAME.state, type);
     window.closeTurretMenu = () => GAME.closeTurretMenu(GAME.state);
     window.toggleSettings = () => GAME.toggleSettings();

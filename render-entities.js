@@ -13,7 +13,7 @@ GAME.drawEntities = function (ctx, state) {
             if (z.type === 'shooter') { ctx.fillStyle = '#555'; ctx.fillRect(10, -3, 25, 6); }
             if (z.type === 'shotgunner') { ctx.fillStyle = '#333'; ctx.fillRect(10, -5, 20, 10); }
             if (z.type === 'ar_gunner') { ctx.fillStyle = '#111'; ctx.fillRect(10, -2, 25, 4); }
-            if (z.type === 'boss') { ctx.fillStyle = '#000'; ctx.fillRect(20, -10, 40, 20); ctx.strokeStyle = '#444'; ctx.strokeRect(20, -10, 40, 20); }
+            if (z.type === 'boss') { ctx.fillStyle = '#000'; ctx.fillRect(50, -10, 50, 20); ctx.strokeStyle = '#444'; ctx.strokeRect(50, -10, 50, 20); }
             ctx.restore();
         }
     });
@@ -24,5 +24,5 @@ GAME.drawEntities = function (ctx, state) {
     ctx.restore();
 
     bullets.forEach(b => { ctx.fillStyle = b.color || '#f1c40f'; ctx.beginPath(); ctx.arc(b.x, b.y, 4, 0, Math.PI * 2); ctx.fill(); });
-    enemyBullets.forEach(b => { ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI * 2); ctx.fill(); });
+    enemyBullets.forEach(b => { ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.arc(b.x, b.y, b.radius || 5, 0, Math.PI * 2); ctx.fill(); });
 };

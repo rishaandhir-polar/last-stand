@@ -25,8 +25,8 @@ GAME.updateZombies = function (state, timestamp, scale) {
             GAME.updateHUD(state);
         }
 
-        if (z.type === 'shooter' || z.type === 'shotgunner' || z.type === 'ar_gunner' || z.type === 'flamethrower') {
-            if (dToP < 250) { z.x -= Math.cos(angle) * z.speed * scale; z.y -= Math.sin(angle) * z.speed * scale; }
+        if (z.type === 'shooter' || z.type === 'shotgunner' || z.type === 'ar_gunner' || z.type === 'flamethrower' || z.type === 'boss') {
+            if (dToP < 300) { z.x -= Math.cos(angle) * z.speed * scale; z.y -= Math.sin(angle) * z.speed * scale; }
             GAME.handleShooterAI(state, z, angle);
         }
         if (z.type === 'exploder' && dToP < 50) { zombies.splice(i, 1); GAME.explodeGeneric(state, z.x, z.y, 30, 200, true); }
@@ -60,5 +60,10 @@ GAME.handleShooterAI = function (state, z, angle) {
             if (dToP < 110) { player.hp -= 0.3; GAME.updateHUD(state); }
             z.lastShot = now;
         }
+    }
+    if (z.type === 'boss' && (!z.lastShot || now - z.lastShot > 1500)) {
+        enemyBullets.push({ x: z.x, y: z.y, vx: Math.cos(angle) * 12, vy: Math.sin(angle) * 12, dmg: 75, radius: 10 });
+        GAME.soundManager.explode();
+        z.lastShot = now;
     }
 };
