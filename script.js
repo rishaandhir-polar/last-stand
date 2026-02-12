@@ -10,6 +10,7 @@
         resize();
 
         GAME.setupInput(state);
+        GAME.soundManager.loadAllSounds();
 
         GAME.openShop(state);
         GAME.updateHUD(state);

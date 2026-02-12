@@ -3,6 +3,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     const { player, zombies, items, canvas, keys, mobileInput } = state;
     const scale = dt / 16.67;
 
+    // Auto-fire for certain weapons
     if (state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower')) {
         if (timestamp > state.fireCooldown) window.dispatchEvent(new CustomEvent('player-shoot', { detail: { timestamp } }));
     }
@@ -27,13 +28,24 @@ GAME.updatePhysics = function (state, timestamp, dt) {
 GAME.handlePlayerMovement = function (state, timestamp, scale) {
     const { player, keys, mobileInput, canvas } = state;
     const PLAYER_SPEED = GAME.PLAYER_SPEED;
+
+    // Movement Logic
     let dx = (keys['d'] || keys['ArrowRight'] ? 1 : 0) - (keys['a'] || keys['ArrowLeft'] ? 1 : 0);
     let dy = (keys['s'] || keys['ArrowDown'] ? 1 : 0) - (keys['w'] || keys['ArrowUp'] ? 1 : 0);
     if (mobileInput.active) { dx = mobileInput.x; dy = mobileInput.y; }
 
-    if (keys[' '] && !player.isDashing && player.stamina >= 30 && (dx !== 0 || dy !== 0)) {
-        player.isDashing = true; player.lastDashTime = timestamp; player.stamina -= 30;
+    // Dash Logic
+    const dashKey = state.controlMode === 'keyboard' ? 'Shift' : ' ';
+    if (keys[dashKey] && !player.isDashing && player.stamina >= 30 && (dx !== 0 || dy !== 0)) {
+        player.isDashing = true;
+        player.lastDashTime = timestamp;
+        player.stamina -= 30;
     }
+
+    if (player.isDashing && timestamp - player.lastDashTime > 200) {
+        player.isDashing = false;
+    }
+
     if (!player.isDashing && player.stamina < player.maxStamina) player.stamina += 0.5 * scale;
 
     let speed = player.isDashing ? PLAYER_SPEED * 4 : PLAYER_SPEED;
@@ -43,7 +55,24 @@ GAME.handlePlayerMovement = function (state, timestamp, scale) {
     }
     player.x = Math.max(50, Math.min(canvas.width - 50, player.x));
     player.y = Math.max(50, Math.min(canvas.height - 50, player.y));
-    player.angle = Math.atan2(state.mouseY - player.y, state.mouseX - player.x);
+
+    // Control Mode Angle Logic
+    if (state.controlMode === 'keyboard') {
+        const rotationSpeed = 0.04 * scale;
+        // Check both lowercase and uppercase for robust key detection
+        if (state.keys['z'] || state.keys['Z']) player.angle -= rotationSpeed;
+        if (state.keys['c'] || state.keys['C']) player.angle += rotationSpeed;
+
+        // Shoot with Space in keyboard mode
+        if (state.keys[' '] && !player.isDashing) {
+            if (timestamp > state.fireCooldown) {
+                window.dispatchEvent(new CustomEvent('player-shoot', { detail: { timestamp } }));
+            }
+        }
+    } else {
+        // Only update angle via mouse if NOT in keyboard mode
+        player.angle = Math.atan2(state.mouseY - player.y, state.mouseX - player.x);
+    }
 };
 
 GAME.updateSystemItems = function (state, timestamp) {
