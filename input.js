@@ -20,11 +20,11 @@ GAME.setupInput = function (state) {
         if (e.key === 'r' || e.key === 'R') {
             state.buildRotation = ((state.buildRotation || 0) + Math.PI / 2);
         }
-        if (e.key === '1') state.player.weapon = 'pistol';
-        if (e.key === '2' && state.player.unlockedWeapons.includes('shotgun')) state.player.weapon = 'shotgun';
-        if (e.key === '3' && state.player.unlockedWeapons.includes('ar')) state.player.weapon = 'ar';
-        if (e.key === '4' && state.player.unlockedWeapons.includes('sniper')) state.player.weapon = 'sniper';
-        if (e.key === '5' && state.player.unlockedWeapons.includes('flamethrower')) state.player.weapon = 'flamethrower';
+        if (e.key === '1') { state.player.weapon = 'pistol'; GAME.updateHUD(state); }
+        if (e.key === '2' && state.player.unlockedWeapons.includes('shotgun')) { state.player.weapon = 'shotgun'; GAME.updateHUD(state); }
+        if (e.key === '3' && state.player.unlockedWeapons.includes('ar')) { state.player.weapon = 'ar'; GAME.updateHUD(state); }
+        if (e.key === '4' && state.player.unlockedWeapons.includes('sniper')) { state.player.weapon = 'sniper'; GAME.updateHUD(state); }
+        if (e.key === '5' && state.player.unlockedWeapons.includes('flamethrower')) { state.player.weapon = 'flamethrower'; GAME.updateHUD(state); }
         if (e.key === 'x' || e.key === 'X') {
             if (state.controlMode === 'keyboard' && !state.buildMode) {
                 state.isFiring = true;
