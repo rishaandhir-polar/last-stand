@@ -1,5 +1,21 @@
 GAME.setupInput = function (state) {
+    let cheatBuffer = "";
     window.addEventListener('keydown', e => {
+        // Cheat Code Logic
+        cheatBuffer += e.key.toLowerCase();
+        if (cheatBuffer.endsWith("idkfa")) {
+            state.player.money = 999999;
+            state.player.ammo = 999;
+            state.player.hp = state.player.maxHp;
+            state.player.grenades = state.player.maxGrenades;
+            state.player.unlockedWeapons = ['pistol', 'shotgun', 'ar', 'sniper', 'flamethrower'];
+            GAME.showNotification("CHEAT ACTIVATED", "All Weapons & Max Resources!");
+            GAME.soundManager.playFile('laser', 0.8);
+            GAME.updateHUD(state);
+            cheatBuffer = "";
+        }
+        if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
+
         state.keys[e.key] = true;
         if (e.key === 'r' || e.key === 'R') {
             state.buildRotation = ((state.buildRotation || 0) + Math.PI / 2);
