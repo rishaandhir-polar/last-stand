@@ -1,0 +1,62 @@
+#turret-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 250px;
+    background: rgba(30, 40, 50, 0.95);
+    border: 3px solid #3498db;
+    padding: 15px;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 20;
+    pointer-events: auto;
+}
+
+#notification-area {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(30, 40, 50, 0.95);
+    border: 3px solid #f39c12;
+    padding: 30px 60px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 0 40px rgba(243, 156, 18, 0.5);
+    z-index: 3000;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+#settings-btn {
+    pointer-events: auto;
+    cursor: pointer;
+    font-family: 'Black Ops One', cursive;
+    color: #ffd700;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #ffd700;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+#settings-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.1);
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Stand: Zombie Outpost</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="ui-layer">
+        <div id="hud">
+            <div class="stat">WAVE: <span id="wave-num">1</span></div>
+            <div class="stat">HP: <span id="hp-val">100</span></div>
+            <div class="stat">AMMO: <span id="ammo-val">30</span></div>
+            <div class="stat">MONEY: $<span id="money-val">0</span></div>
+            <div class="stat">WEAPON: <span id="weapon-val">PISTOL</span></div>
+            <div class="stat">GRENADES: <span id="grenade-val">0/5</span></div>
+        </div>
+
+        <div id="shop-menu" class="hidden">
+            <h2 id="wave-title">OUTPOST ARMORY</h2>
+            <div class="shop-item" onclick="buy('medkit')">
+                <div class="icon">❤️</div>
+                <div class="details">
+                    <span class="name">Medkit</span>
+                    <span class="cost">$50</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('ammo')">
+                <div class="icon">📦</div>
+                <div class="details">
+                    <span class="name">Ammo Refill</span>
+                    <span class="cost">$20</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('shotgun')">
+                <div class="icon">🔫</div>
+                <div class="details">
+                    <span class="name">Shotgun</span>
+                    <span class="cost">$200</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('turret')">
+                <div class="icon">🤖</div>
+                <div class="details">
+                    <span class="name">Auto-Turret</span>
+                    <span class="cost">$350</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('wall_wood')">
+                <div class="icon">🪵</div>
+                <div class="details"><span class="name">Wood Wall</span><span class="cost">$50</span></div>
+            </div>
+            <div class="shop-item" onclick="buy('wall_stone')">
+                <div class="icon">🪨</div>
+                <div class="details"><span class="name">Stone Wall</span><span class="cost">$150</span></div>
+            </div>
+            <div class="shop-item" onclick="buy('wall_metal')">
+                <div class="icon">🛡️</div>
+                <div class="details"><span class="name">Metal Wall</span><span class="cost">$300</span></div>
+            </div>
+            <div class="shop-item" onclick="buy('landmine')">
+                <div class="icon">💣</div>
+                <div class="details"><span class="name">Landmine</span><span class="cost">$80</span></div>
+            </div>
+            <div class="shop-item" onclick="buy('spike')">
+                <div class="icon">🪤</div>
+                <div class="details"><span class="name">Spike Trap</span><span class="cost">$40</span></div>
+            </div>
+            <div class="shop-item" onclick="buy('grenade')">
+                <div class="icon">💣</div>
+                <div class="details"><span class="name">Grenade</span><span class="cost">$500</span></div>
+            </div>
+            <button id="next-wave-btn" onclick="nextWave()">START NEXT WAVE</button>
+        </div>
+
+        <div id="turret-menu" class="hidden">
+            <h2 id="turret-title">TURRET UPGRADE</h2>
+            <div id="turret-stats">Levels: 1 | Ammo: 50</div>
+            <div class="shop-item" onclick="upgradeTurret('capacity')">
+                <span class="name">Max Ammo (+50)</span>
+                <span class="cost">$100</span>
+            </div>
+            <div class="shop-item" onclick="upgradeTurret('damage')">
+                <span class="name">Damage (+5)</span>
+                <span class="cost">$150</span>
+            </div>
+            <div class="shop-item" onclick="upgradeTurret('regen')">
+                <span class="name">Ammo Fab (1/s)</span>
+                <span class="cost">$300</span>
+            </div>
+            <div class="shop-item" onclick="upgradeTurret('shotgun')">
+                <span class="name">Shotgun Mode</span>
+                <span class="cost">$500</span>
+            </div>
+            <button onclick="closeTurretMenu()" class="close-btn">CLOSE</button>
+        </div>
+
+        <div id="notification-area" class="hidden">
+            <h2 id="notif-title">UNLOCK!</h2>
+            <p id="notif-message">New Weapon Acquired</p>
+        </div>
+
+        <div id="game-over" class="hidden">
+            <h1>YOU DIED</h1>
+            <p>Survived <span id="final-wave">0</span> Waves</p>
+            <button onclick="location.reload()">TRY AGAIN</button>
+        </div>
+
+        <div id="mobile-controls" class="hidden">
+            <div id="joystick-area">
+                <div id="joystick-base">
+                    <div id="joystick-stick"></div>
+                </div>
+            </div>
+            <div id="action-area">
+                <button id="mobile-dash-btn" class="mobile-btn">⚡</button>
+                <button id="mobile-shoot-btn" class="mobile-btn">🔥</button>
+                <div class="sub-actions">
+                    <button id="mobile-reload-btn" class="mobile-btn small">🔄</button>
+                    <button id="mobile-grenade-btn" class="mobile-btn small">💣</button>
+                    <button id="mobile-shop-btn" class="mobile-btn small" onclick="openShop()">🛒</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Button in HUD -->
+        <button id="settings-btn" onclick="toggleSettings()"
+            style="position: absolute; top: 20px; right: 20px; z-index: 50;">⚙️ SETTINGS</button>
+
+        <!-- Settings Menu -->
+        <div id="settings-menu" class="hidden">
+            <h2>SETTINGS</h2>
+            <div class="setting-row">
+                <label for="control-mode">Control Scheme:</label>
+                <button id="control-mode-btn" onclick="cycleControlMode()">WASD + Mouse (Computer Only)</button>
+            </div>
+            <p id="control-desc" style="font-size: 14px; color: #aaa; margin-top: 10px;">
+                Move: WASD | Aim: Mouse | Shoot: Click (Computer Only)
+            </p>
+
+            <div class="setting-row" style="margin-top: 20px;">
+                <label style="display: block; margin-bottom: 5px;">Audio Settings:</label>
+                <div style="display: flex; gap: 10px;">
+                    <button id="music-btn" onclick="toggleMusic()" style="flex: 1; padding: 10px; font-size: 14px;">Mute
+                        Music</button>
+                    <button id="sfx-btn" onclick="toggleSFX()" style="flex: 1; padding: 10px; font-size: 14px;">Mute
+                        SFX</button>
+                </div>
+            </div>
+            <button onclick="toggleSettings()" class="close-btn" style="margin-top: 20px;">CLOSE</button>
+        </div>
+    </div>
+
+    <canvas id="game-canvas"></canvas>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
