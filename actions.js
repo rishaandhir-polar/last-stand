@@ -40,16 +40,37 @@ GAME.shoot = function (state, timestamp) {
 
 GAME.buy = function (state, type) {
     const { player } = state;
-    if (type === 'medkit' && player.money >= 50) { player.hp = Math.min(player.maxHp, player.hp + 50); player.money -= 50; }
-    else if (type === 'ammo' && player.money >= 20) { player.ammo += 50; player.money -= 20; }
-    else if (type === 'shotgun' && player.money >= 200) { player.weapon = 'shotgun'; player.unlockedWeapons.push('shotgun'); player.money -= 200; }
-    else if (type === 'turret' && player.money >= 350) { state.buildMode = 'turret'; GAME.closeShop(); }
-    else if (type === 'wall_wood' && player.money >= 50) { state.buildMode = 'wood'; GAME.closeShop(); }
-    else if (type === 'wall_stone' && player.money >= 150) { state.buildMode = 'stone'; GAME.closeShop(); }
-    else if (type === 'wall_metal' && player.money >= 300) { state.buildMode = 'metal'; GAME.closeShop(); }
-    else if (type === 'landmine' && player.money >= 80) { state.buildMode = 'landmine'; GAME.closeShop(); }
-    else if (type === 'spike' && player.money >= 40) { state.buildMode = 'spike'; GAME.closeShop(); }
-    else if (type === 'grenade' && player.money >= 500) { player.grenades = Math.min(player.maxGrenades, player.grenades + 1); player.money -= 500; }
+    let cost = 0;
+    let name = "";
+
+    if (type === 'medkit') { cost = 50; name = "Medkit"; }
+    else if (type === 'ammo') { cost = 20; name = "Ammo"; }
+    else if (type === 'shotgun') { cost = 200; name = "Shotgun"; }
+    else if (type === 'turret') { cost = 350; name = "Turret"; }
+    else if (type === 'wall_wood') { cost = 50; name = "Wood Wall"; }
+    else if (type === 'wall_stone') { cost = 150; name = "Stone Wall"; }
+    else if (type === 'wall_metal') { cost = 300; name = "Metal Wall"; }
+    else if (type === 'landmine') { cost = 80; name = "Landmine"; }
+    else if (type === 'spike') { cost = 40; name = "Spike Trap"; }
+    else if (type === 'grenade') { cost = 500; name = "Grenade"; }
+
+    if (player.money < cost) {
+        GAME.showNotification("INSUFFICIENT FUNDS", `You need $${cost} for ${name}!`);
+        GAME.soundManager.playSynth(200, 0.2, 'sawtooth'); // Error sound
+        return;
+    }
+
+    if (type === 'medkit') { player.hp = Math.min(player.maxHp, player.hp + 50); player.money -= cost; }
+    else if (type === 'ammo') { player.ammo += 50; player.money -= cost; }
+    else if (type === 'shotgun') { player.weapon = 'shotgun'; player.unlockedWeapons.push('shotgun'); player.money -= cost; }
+    else if (type === 'turret') { state.buildMode = 'turret'; GAME.closeShop(); }
+    else if (type === 'wall_wood') { state.buildMode = 'wood'; GAME.closeShop(); }
+    else if (type === 'wall_stone') { state.buildMode = 'stone'; GAME.closeShop(); }
+    else if (type === 'wall_metal') { state.buildMode = 'metal'; GAME.closeShop(); }
+    else if (type === 'landmine') { state.buildMode = 'landmine'; GAME.closeShop(); }
+    else if (type === 'spike') { state.buildMode = 'spike'; GAME.closeShop(); }
+    else if (type === 'grenade') { player.grenades = Math.min(player.maxGrenades, player.grenades + 1); player.money -= cost; }
+
     GAME.soundManager.click();
     GAME.updateHUD(state);
 };

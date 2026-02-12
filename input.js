@@ -8,6 +8,17 @@ GAME.setupInput = function (state) {
         if (e.key === '3' && state.player.unlockedWeapons.includes('sniper')) state.player.weapon = 'sniper';
         if (e.key === '4' && state.player.unlockedWeapons.includes('flamethrower')) state.player.weapon = 'flamethrower';
         if (e.key === 'g' || e.key === 'G') window.dispatchEvent(new CustomEvent('throw-grenade'));
+        if (e.key === 'b' || e.key === 'B') {
+            const shop = document.getElementById('shop-menu');
+            if (shop.classList.contains('hidden')) GAME.openShop(state);
+            else GAME.closeShop();
+        }
+        if (e.key === 'Escape') {
+            state.buildMode = null;
+            GAME.closeShop();
+            GAME.closeTurretMenu(state);
+            document.getElementById('settings-menu').classList.add('hidden');
+        }
     });
 
     window.addEventListener('keyup', e => { state.keys[e.key] = false; });
