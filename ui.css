@@ -51,6 +51,12 @@
     max-width: 95vw;
 }
 
+#wave-title,
+#next-wave-btn {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
 button {
     background: #bd2c2c;
     border: none;
