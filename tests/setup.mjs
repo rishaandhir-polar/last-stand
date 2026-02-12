@@ -1,4 +1,9 @@
 import { vi } from 'vitest';
+import fs from 'fs';
+import path from 'path';
+
+// Define global GAME object
+global.GAME = {};
 
 // Mock AudioContext for JSDOM
 global.window.AudioContext = vi.fn().mockImplementation(() => ({
@@ -25,3 +30,11 @@ global.window.AudioContext = vi.fn().mockImplementation(() => ({
 }));
 
 global.window.webkitAudioContext = global.window.AudioContext;
+
+// Helper to "load" the non-module scripts into the global scope for Vitest
+global.loadScript = (filename) => {
+    const filePath = path.resolve(process.cwd(), filename);
+    const code = fs.readFileSync(filePath, 'utf8');
+    // Execute the code in the global context
+    eval(code);
+};

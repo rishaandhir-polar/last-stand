@@ -67,4 +67,4 @@ class SoundManager {
     toggleSFX() { this.sfxMuted = !this.sfxMuted; return this.sfxMuted; }
 }
 
-export const soundManager = new SoundManager();
+GAME.soundManager = new SoundManager();

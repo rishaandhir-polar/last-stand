@@ -1,21 +1,23 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { updateState, state } from '../state.js';
 
-describe('State Management', () => {
+describe('Global State', () => {
     beforeEach(() => {
-        // Reset state properties manually since it's a singleton export
-        state.wave = 0;
-        state.player.money = 0;
+        // Reset GAME and load state
+        global.GAME = {};
+        global.loadScript('state.js');
     });
 
-    it('should update state properties correctly', () => {
-        updateState({ wave: 5 });
-        expect(state.wave).toBe(5);
+    it('should initialize with default values', () => {
+        expect(GAME.state.player.hp).toBe(100);
+        expect(GAME.state.wave).toBe(0);
     });
 
-    it('should partially update nested objects', () => {
-        const initialMoney = state.player.money;
-        updateState({ player: { ...state.player, money: initialMoney + 100 } });
-        expect(state.player.money).toBe(initialMoney + 100);
+    it('should update state correctly via updateState', () => {
+        GAME.updateState({ wave: 5 });
+        expect(GAME.state.wave).toBe(5);
+
+        GAME.updateState({ player: { hp: 50 } });
+        expect(GAME.state.player.hp).toBe(50);
+        expect(GAME.state.player.maxHp).toBe(100); // Should preserve other keys
     });
 });

@@ -1,4 +1,4 @@
-export const state = {
+GAME.state = {
     canvas: null,
     ctx: null,
     player: {
@@ -22,15 +22,15 @@ export const state = {
     selectedTurret: null
 };
 
-export function updateState(updates) {
+GAME.updateState = function (updates) {
     if (!updates || typeof updates !== 'object') return;
     for (const key in updates) {
         if (Object.prototype.hasOwnProperty.call(updates, key)) {
             if (key === 'player' && typeof updates.player === 'object') {
-                Object.assign(state.player, updates.player);
+                Object.assign(GAME.state.player, updates.player);
             } else {
-                state[key] = updates[key];
+                GAME.state[key] = updates[key];
             }
         }
     }
-}
+};

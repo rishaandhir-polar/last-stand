@@ -1,6 +1,5 @@
-import { TILE_SIZE } from './constants.js';
-
-export function drawMap(ctx, canvas, walls) {
+GAME.drawMap = function (ctx, canvas, walls) {
+    const TILE_SIZE = GAME.TILE_SIZE;
     for (let y = 0; y < canvas.height; y += TILE_SIZE) {
         for (let x = 0; x < canvas.width; x += TILE_SIZE) {
             ctx.fillStyle = ((x / TILE_SIZE + y / TILE_SIZE) % 2 === 0) ? '#2c3e50' : '#34495e';
@@ -26,4 +25,4 @@ export function drawMap(ctx, canvas, walls) {
         }
         ctx.restore();
     });
-}
+};

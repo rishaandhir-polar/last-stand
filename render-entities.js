@@ -1,4 +1,4 @@
-export function drawEntities(ctx, state) {
+GAME.drawEntities = function (ctx, state) {
     const { player, zombies, bullets, enemyBullets } = state;
 
     zombies.forEach(z => {
@@ -25,4 +25,4 @@ export function drawEntities(ctx, state) {
 
     bullets.forEach(b => { ctx.fillStyle = b.color || '#f1c40f'; ctx.beginPath(); ctx.arc(b.x, b.y, 4, 0, Math.PI * 2); ctx.fill(); });
     enemyBullets.forEach(b => { ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI * 2); ctx.fill(); });
-}
+};

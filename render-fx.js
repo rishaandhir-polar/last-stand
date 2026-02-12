@@ -1,4 +1,4 @@
-export function drawFX(ctx, state) {
+GAME.drawFX = function (ctx, state) {
     const { muzzleFlashes, particles, items, turrets } = state;
 
     muzzleFlashes.forEach(f => {
@@ -10,7 +10,11 @@ export function drawFX(ctx, state) {
         }
     });
 
-    particles.forEach(p => { ctx.fillStyle = p.color; ctx.globalAlpha = p.life / 30; ctx.fillRect(p.x, p.y, 4, 4); });
+    particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.life / 30);
+        ctx.fillRect(p.x, p.y, 4, 4);
+    });
     ctx.globalAlpha = 1.0;
 
     items.forEach(item => {
@@ -24,4 +28,4 @@ export function drawFX(ctx, state) {
         ctx.fillStyle = '#7f8c8d'; ctx.fillRect(t.x - 10, t.y - 10, 20, 20);
         ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(t.x, t.y, 8, 0, Math.PI * 2); ctx.fill();
     });
-}
+};

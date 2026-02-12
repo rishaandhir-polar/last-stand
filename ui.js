@@ -1,60 +1,77 @@
-export function updateHUD(state) {
+GAME.updateHUD = function (state) {
     const { player, wave } = state;
-    document.getElementById('wave-num').innerText = wave;
-    document.getElementById('hp-val').innerText = Math.ceil(player.hp);
-    document.getElementById('ammo-val').innerText = Math.floor(player.ammo);
-    document.getElementById('money-val').innerText = player.money;
-    document.getElementById('weapon-val').innerText = player.weapon.toUpperCase();
-    document.getElementById('grenade-val').innerText = `${player.grenades}/${player.maxGrenades}`;
-}
+    const waveNum = document.getElementById('wave-num');
+    if (waveNum) waveNum.innerText = wave;
+    const hpVal = document.getElementById('hp-val');
+    if (hpVal) hpVal.innerText = Math.ceil(player.hp);
+    const ammoVal = document.getElementById('ammo-val');
+    if (ammoVal) ammoVal.innerText = Math.floor(player.ammo);
+    const moneyVal = document.getElementById('money-val');
+    if (moneyVal) moneyVal.innerText = player.money;
+    const weaponVal = document.getElementById('weapon-val');
+    if (weaponVal) weaponVal.innerText = player.weapon.toUpperCase();
+    const grenadeVal = document.getElementById('grenade-val');
+    if (grenadeVal) grenadeVal.innerText = `${player.grenades}/${player.maxGrenades}`;
+};
 
-export function showNotification(title, message) {
+GAME.showNotification = function (title, message) {
     const area = document.getElementById('notification-area');
-    document.getElementById('notif-title').innerText = title;
-    document.getElementById('notif-message').innerText = message;
+    if (!area) return;
+    const titleEl = document.getElementById('notif-title');
+    const msgEl = document.getElementById('notif-message');
+    if (titleEl) titleEl.innerText = title;
+    if (msgEl) msgEl.innerText = message;
     area.classList.remove('hidden');
     setTimeout(() => area.classList.add('hidden'), 5000);
-}
+};
 
-export function openShop(state) {
-    document.getElementById('shop-menu').classList.remove('hidden');
-    document.getElementById('wave-title').innerText = "WAVE " + (state.wave + 1) + " READY";
-}
+GAME.openShop = function (state) {
+    const shop = document.getElementById('shop-menu');
+    if (shop) shop.classList.remove('hidden');
+    const waveTitle = document.getElementById('wave-title');
+    if (waveTitle) waveTitle.innerText = "WAVE " + (state.wave + 1) + " READY";
+};
 
-export function closeShop() {
-    document.getElementById('shop-menu').classList.add('hidden');
-}
+GAME.closeShop = function () {
+    const shop = document.getElementById('shop-menu');
+    if (shop) shop.classList.add('hidden');
+};
 
-export function doGameOver(state) {
-    document.getElementById('game-over').classList.remove('hidden');
-    document.getElementById('final-wave').innerText = state.wave;
+GAME.doGameOver = function (state) {
+    const gameOverEl = document.getElementById('game-over');
+    if (gameOverEl) gameOverEl.classList.remove('hidden');
+    const finalWave = document.getElementById('final-wave');
+    if (finalWave) finalWave.innerText = state.wave;
     state.gameOver = true;
-}
+};
 
-export function toggleSettings() {
-    document.getElementById('settings-menu').classList.toggle('hidden');
-}
+GAME.toggleSettings = function () {
+    const settings = document.getElementById('settings-menu');
+    if (settings) settings.classList.toggle('hidden');
+};
 
-export function openTurretMenu(state, turret) {
+GAME.openTurretMenu = function (state, turret) {
     state.selectedTurret = turret;
     const menu = document.getElementById('turret-menu');
-    menu.classList.remove('hidden');
-    document.getElementById('turret-stats').innerText = `Level: ${turret.level} | Ammo: ${turret.ammo}/${turret.maxAmmo}`;
-}
+    if (menu) menu.classList.remove('hidden');
+    const stats = document.getElementById('turret-stats');
+    if (stats) stats.innerText = `Level: ${turret.level} | Ammo: ${turret.ammo}/${turret.maxAmmo}`;
+};
 
-export function closeTurretMenu(state) {
+GAME.closeTurretMenu = function (state) {
     state.selectedTurret = null;
-    document.getElementById('turret-menu').classList.add('hidden');
-}
+    const menu = document.getElementById('turret-menu');
+    if (menu) menu.classList.add('hidden');
+};
 
-export function updateControlDesc(mode) {
+GAME.updateControlDesc = function (mode) {
     const desc = document.getElementById('control-desc');
     const btn = document.getElementById('control-mode-btn');
     if (mode === 'mouse') {
-        btn.innerText = "WASD + Mouse (Computer Only)";
-        desc.innerText = "Move: WASD | Aim: Mouse | Shoot: Click (Computer Only)";
+        if (btn) btn.innerText = "WASD + Mouse (Computer Only)";
+        if (desc) desc.innerText = "Move: WASD | Aim: Mouse | Shoot: Click (Computer Only)";
     } else {
-        btn.innerText = "Keyboard Only (Z/C to Aim)";
-        desc.innerText = "Move: WASD | Aim: Z / C | Shoot: Space (Computer Only)";
+        if (btn) btn.innerText = "Keyboard Only (Z/C to Aim)";
+        if (desc) desc.innerText = "Move: WASD | Aim: Z / C | Shoot: Space (Computer Only)";
     }
-}
+};

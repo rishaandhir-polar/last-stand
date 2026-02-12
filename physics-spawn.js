@@ -1,7 +1,6 @@
-import { ZOMBIE_DEFAULT_HP } from './constants.js';
-
-export function spawnZombie(state) {
+GAME.spawnZombie = function (state) {
     const { wave, canvas } = state;
+    const ZOMBIE_DEFAULT_HP = GAME.ZOMBIE_DEFAULT_HP;
     let pool = [{ type: 'normal', weight: 50 }];
     if (wave > 3) pool.push({ type: 'fast', weight: 20 });
     if (wave > 5) pool.push({ type: 'tank', weight: 10 });
@@ -30,9 +29,9 @@ export function spawnZombie(state) {
     if (type === 'spawner') { z.speed *= 0.5; z.hp *= 2.0; z.color = '#f1c40f'; z.reward = 60; }
     z.maxHp = z.hp;
     state.zombies.push(z);
-}
+};
 
-export function spawnBoss(state) {
+GAME.spawnBoss = function (state) {
     const { wave, canvas } = state;
     let x, y, side = Math.floor(Math.random() * 4);
     if (side === 0) { x = Math.random() * canvas.width; y = -100; }
@@ -40,4 +39,4 @@ export function spawnBoss(state) {
     else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + 100; }
     else { x = -100; y = Math.random() * canvas.height; }
     state.zombies.push({ x, y, hp: 2000 + (wave * 200), maxHp: 2000 + (wave * 200), radius: 60, speed: 1.5, color: '#2c3e50', reward: 1000, type: 'boss' });
-}
+};

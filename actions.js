@@ -1,12 +1,8 @@
-import { BULLET_SPEED } from './constants.js';
-import { soundManager } from './sound-manager.js';
-import { updateHUD, closeShop, showNotification } from './ui.js';
-import { spawnBoss } from './physics-spawn.js';
-
-export function shoot(state, timestamp) {
+GAME.shoot = function (state, timestamp) {
     const { player, bullets, muzzleFlashes } = state;
     if (player.ammo <= 0) return;
     let angle = player.angle;
+    const BULLET_SPEED = GAME.BULLET_SPEED;
 
     if (player.weapon === 'ar') {
         state.fireCooldown = timestamp + 100;
@@ -38,11 +34,11 @@ export function shoot(state, timestamp) {
         bullets.push({ x: player.x, y: player.y, vx: Math.cos(angle) * BULLET_SPEED, vy: Math.sin(angle) * BULLET_SPEED, dmg: 25 });
         player.ammo--;
     }
-    soundManager.shoot(player.weapon);
-    updateHUD(state);
-}
+    GAME.soundManager.shoot(player.weapon);
+    GAME.updateHUD(state);
+};
 
-export function buy(state, type) {
+GAME.buy = function (state, type) {
     const { player } = state;
     if (type === 'medkit' && player.money >= 50) { player.hp = Math.min(player.maxHp, player.hp + 50); player.money -= 50; }
     else if (type === 'ammo' && player.money >= 20) { player.ammo += 50; player.money -= 20; }
@@ -54,21 +50,21 @@ export function buy(state, type) {
     else if (type === 'landmine' && player.money >= 80) { state.buildMode = 'landmine'; }
     else if (type === 'spike' && player.money >= 40) { state.buildMode = 'spike'; }
     else if (type === 'grenade' && player.money >= 500) { player.grenades = Math.min(player.maxGrenades, player.grenades + 1); player.money -= 500; }
-    soundManager.click();
-    updateHUD(state);
-}
+    GAME.soundManager.click();
+    GAME.updateHUD(state);
+};
 
-export function nextWave(state) {
-    closeShop();
+GAME.nextWave = function (state) {
+    GAME.closeShop();
     state.wave++;
     state.waveInProgress = true;
-    soundManager.click();
-    if (state.wave % 5 === 0) spawnBoss(state);
+    GAME.soundManager.click();
+    if (state.wave % 5 === 0) GAME.spawnBoss(state);
     else state.zombiesToSpawn = 5 + Math.floor(state.wave * 1.5);
-    updateHUD(state);
-}
+    GAME.updateHUD(state);
+};
 
-export function placeBuild(state) {
+GAME.placeBuild = function (state) {
     const { player, mouseX, mouseY, buildRotation } = state;
     let cost = 0;
     if (state.buildMode === 'turret') cost = 350;
@@ -83,22 +79,22 @@ export function placeBuild(state) {
         else state.walls.push({ x: mouseX, y: mouseY, hp: cost, maxHp: cost, type: state.buildMode, rotation: buildRotation });
         player.money -= cost;
         state.buildMode = null;
-        soundManager.click();
-        updateHUD(state);
+        GAME.soundManager.click();
+        GAME.updateHUD(state);
     }
-}
+};
 
-export function throwGrenade(state) {
+GAME.throwGrenade = function (state) {
     if (state.player.grenades <= 0) return;
     let dx = state.mouseX - state.player.x, dy = state.mouseY - state.player.y;
     let dist = Math.hypot(dx, dy);
     if (dist > 300) { dx *= 300 / dist; dy *= 300 / dist; }
     state.thrownGrenades.push({ x: state.player.x, y: state.player.y, tx: state.player.x + dx, ty: state.player.y + dy, rotation: 0 });
     state.player.grenades--;
-    updateHUD(state);
-}
+    GAME.updateHUD(state);
+};
 
-export function upgradeTurret(state, type) {
+GAME.upgradeTurret = function (state, type) {
     const t = state.selectedTurret;
     if (!t) return;
     const { player } = state;
@@ -106,7 +102,8 @@ export function upgradeTurret(state, type) {
     else if (type === 'damage' && player.money >= 150) { t.damage += 5; t.level++; player.money -= 150; }
     else if (type === 'regen' && player.money >= 300) { t.ammoRegen += 1; player.money -= 300; }
     else if (type === 'shotgun' && player.money >= 500) { t.type = 'shotgun'; player.money -= 500; }
-    soundManager.click();
-    updateHUD(state);
-    document.getElementById('turret-stats').innerText = `Level: ${t.level} | Ammo: ${t.ammo}/${t.maxAmmo}`;
-}
+    GAME.soundManager.click();
+    GAME.updateHUD(state);
+    const stats = document.getElementById('turret-stats');
+    if (stats) stats.innerText = `Level: ${t.level} | Ammo: ${t.ammo}/${t.maxAmmo}`;
+};

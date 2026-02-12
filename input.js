@@ -1,4 +1,4 @@
-export function setupInput(state) {
+GAME.setupInput = function (state) {
     window.addEventListener('keydown', e => {
         state.keys[e.key] = true;
         if (e.key === 'r' || e.key === 'R') state.buildRotation = (state.buildRotation + Math.PI / 2) % Math.PI;
@@ -29,14 +29,21 @@ export function setupInput(state) {
 
     if ('ontouchstart' in window) {
         state.isMobile = true;
-        document.getElementById('mobile-controls').classList.remove('hidden');
-        setupMobileControls(state);
+        const mobileControls = document.getElementById('mobile-controls');
+        if (mobileControls) mobileControls.classList.remove('hidden');
+        GAME.setupMobileControls(state);
     }
-}
+};
 
-export function setupMobileControls(state) {
-    document.getElementById('mobile-dash-btn').addEventListener('touchstart', () => state.keys[' '] = true);
-    document.getElementById('mobile-dash-btn').addEventListener('touchend', () => state.keys[' '] = false);
-    document.getElementById('mobile-shoot-btn').addEventListener('touchstart', () => state.isFiring = true);
-    document.getElementById('mobile-shoot-btn').addEventListener('touchend', () => state.isFiring = false);
-}
+GAME.setupMobileControls = function (state) {
+    const dashBtn = document.getElementById('mobile-dash-btn');
+    if (dashBtn) {
+        dashBtn.addEventListener('touchstart', () => state.keys[' '] = true);
+        dashBtn.addEventListener('touchend', () => state.keys[' '] = false);
+    }
+    const shootBtn = document.getElementById('mobile-shoot-btn');
+    if (shootBtn) {
+        shootBtn.addEventListener('touchstart', () => state.isFiring = true);
+        shootBtn.addEventListener('touchend', () => state.isFiring = false);
+    }
+};

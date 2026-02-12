@@ -1,16 +1,12 @@
-import { drawMap } from './render-map.js';
-import { drawEntities } from './render-entities.js';
-import { drawFX } from './render-fx.js';
-
-export function draw(state) {
+GAME.draw = function (state) {
     const { ctx, canvas, walls } = state;
-    drawMap(ctx, canvas, walls);
-    drawEntities(ctx, state);
-    drawFX(ctx, state);
-    if (state.buildMode) drawBuildGhost(ctx, state);
-}
+    GAME.drawMap(ctx, canvas, walls);
+    GAME.drawEntities(ctx, state);
+    GAME.drawFX(ctx, state);
+    if (state.buildMode) GAME.drawBuildGhost(ctx, state);
+};
 
-export function drawBuildGhost(ctx, state) {
+GAME.drawBuildGhost = function (ctx, state) {
     const { mouseX, mouseY, buildRotation, buildMode } = state;
     ctx.save(); ctx.globalAlpha = 0.5; ctx.translate(mouseX, mouseY); ctx.rotate(buildRotation);
     ctx.fillStyle = '#7f8c8d';
@@ -20,19 +16,19 @@ export function drawBuildGhost(ctx, state) {
         ctx.fillRect(-40, -10, 80, 20);
     }
     ctx.restore();
-}
+};
 
-export function drawLighting(state) {
+GAME.drawLighting = function (state) {
     const { ctx, canvas, worldOpacity } = state;
     if (worldOpacity > 0) {
         ctx.fillStyle = `rgba(0, 0, 50, ${worldOpacity})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-}
+};
 
-export function drawStaminaUI(state) {
+GAME.drawStaminaUI = function (state) {
     const { ctx, canvas, player } = state;
     let barWidth = 200, x = (canvas.width - barWidth) / 2, y = canvas.height - 40;
     ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x, y, barWidth, 10);
     ctx.fillStyle = '#f1c40f'; ctx.fillRect(x, y, barWidth * (player.stamina / player.maxStamina), 10);
-}
+};

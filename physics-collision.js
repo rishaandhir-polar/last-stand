@@ -1,7 +1,4 @@
-import { spawnBlood, checkBossDrop } from './physics-core.js';
-import { updateHUD, doGameOver } from './ui.js';
-
-export function updateBullets(state, scale) {
+GAME.updateBullets = function (state, scale) {
     const { bullets, zombies, canvas, player } = state;
     for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
@@ -11,15 +8,15 @@ export function updateBullets(state, scale) {
         for (let j = zombies.length - 1; j >= 0; j--) {
             let z = zombies[j];
             if (Math.hypot(b.x - z.x, b.y - z.y) < z.radius) {
-                z.hp -= b.dmg; spawnBlood(state, z.x, z.y, 5);
-                if (z.hp <= 0) { zombies.splice(j, 1); player.money += z.reward; checkBossDrop(state, z); updateHUD(state); }
+                z.hp -= b.dmg; GAME.spawnBlood(state, z.x, z.y, 5);
+                if (z.hp <= 0) { zombies.splice(j, 1); player.money += z.reward; GAME.checkBossDrop(state, z); GAME.updateHUD(state); }
                 if (b.type !== 'sniper') { bullets.splice(i, 1); break; }
             }
         }
     }
-}
+};
 
-export function updateEnemyBullets(state, scale) {
+GAME.updateEnemyBullets = function (state, scale) {
     const { enemyBullets, walls, player, canvas } = state;
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
         let b = enemyBullets[i]; b.x += b.vx * scale; b.y += b.vy * scale;
@@ -35,8 +32,8 @@ export function updateEnemyBullets(state, scale) {
         }
         if (hit) continue;
         if (Math.hypot(player.x - b.x, player.y - b.y) < (20 + (b.radius || 0))) {
-            player.hp -= b.dmg; spawnBlood(state, player.x, player.y, 3); enemyBullets.splice(i, 1);
-            updateHUD(state); if (player.hp <= 0) doGameOver(state);
+            player.hp -= b.dmg; GAME.spawnBlood(state, player.x, player.y, 3); enemyBullets.splice(i, 1);
+            GAME.updateHUD(state); if (player.hp <= 0) GAME.doGameOver(state);
         }
     }
-}
+};
