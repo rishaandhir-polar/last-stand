@@ -23,6 +23,7 @@
         // Safari Mobile: Resume AudioContext on first interaction
         const resumeAudio = () => {
             GAME.soundManager.resume();
+            GAME.soundManager.startMusic();
             window.removeEventListener('touchstart', resumeAudio);
             window.removeEventListener('mousedown', resumeAudio);
         };

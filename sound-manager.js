@@ -8,6 +8,8 @@ class SoundManager {
         this.musicMuted = false;
         this.sfxMuted = false;
         this.legacySounds = {}; // For file:// compatibility
+        this.musicSource = null;
+        this.bgMusicStarted = false;
     }
 
     async resume() {
@@ -105,7 +107,41 @@ class SoundManager {
         osc.stop(this.ctx.currentTime + dur);
     }
 
-    toggleMusic() { this.musicMuted = !this.musicMuted; return this.musicMuted; }
+    toggleMusic() {
+        this.musicMuted = !this.musicMuted;
+        if (this.musicMuted) {
+            if (this.musicSource) this.musicSource.stop();
+            if (this.legacySounds['bg']) this.legacySounds['bg'].pause();
+        } else {
+            this.startMusic();
+        }
+        return this.musicMuted;
+    }
+
+    startMusic() {
+        if (this.musicMuted || this.bgMusicStarted) return;
+        this.bgMusicStarted = true;
+
+        if (this.sounds['bg']) {
+            const playLoop = () => {
+                if (this.musicMuted) return;
+                this.musicSource = this.ctx.createBufferSource();
+                this.musicSource.buffer = this.sounds['bg'];
+                this.musicSource.loop = true;
+                const gain = this.ctx.createGain();
+                gain.gain.value = 0.3;
+                gain.connect(this.masterGain);
+                this.musicSource.connect(gain);
+                this.musicSource.start(0);
+            };
+            playLoop();
+        } else if (this.legacySounds['bg']) {
+            this.legacySounds['bg'].loop = true;
+            this.legacySounds['bg'].volume = 0.3;
+            this.legacySounds['bg'].play().catch(() => { this.bgMusicStarted = false; });
+        }
+    }
+
     toggleSFX() { this.sfxMuted = !this.sfxMuted; return this.sfxMuted; }
 }
 

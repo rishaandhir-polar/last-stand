@@ -1,22 +1,6 @@
 GAME.setupInput = function (state) {
-    let cheatBuffer = "";
     window.addEventListener('keydown', e => {
         if (e.repeat) return;
-        // Cheat Code Logic
-        cheatBuffer += e.key.toLowerCase();
-        if (cheatBuffer.endsWith("idkfa")) {
-            state.player.money = 999999;
-            state.player.ammo = 999;
-            state.player.hp = state.player.maxHp;
-            state.player.grenades = state.player.maxGrenades;
-            state.player.unlockedWeapons = ['pistol', 'shotgun', 'ar', 'sniper', 'flamethrower'];
-            GAME.showNotification("CHEAT ACTIVATED", "All Weapons & Max Resources!");
-            GAME.soundManager.playFile('laser', 0.8);
-            GAME.updateHUD(state);
-            cheatBuffer = "";
-        }
-        if (cheatBuffer.length > 10) cheatBuffer = cheatBuffer.substring(1);
-
         state.keys[e.key] = true;
         if (e.key === 'r' || e.key === 'R') {
             state.buildRotation = ((state.buildRotation || 0) + Math.PI / 2);
@@ -34,9 +18,13 @@ GAME.setupInput = function (state) {
         }
         if (e.key === 'g' || e.key === 'G') window.dispatchEvent(new CustomEvent('throw-grenade'));
         if (e.key === 'b' || e.key === 'B') {
-            const shop = document.getElementById('shop-menu');
-            if (shop.classList.contains('hidden')) GAME.openShop(state);
-            else GAME.closeShop();
+            if (state.waveInProgress) {
+                GAME.forfeit(state);
+            } else {
+                const shop = document.getElementById('shop-menu');
+                if (shop.classList.contains('hidden')) GAME.openShop(state);
+                else GAME.closeShop();
+            }
         }
         if (e.key === 'Escape') {
             state.buildMode = null;
@@ -92,12 +80,58 @@ GAME.setupInput = function (state) {
 GAME.setupMobileControls = function (state) {
     const dashBtn = document.getElementById('mobile-dash-btn');
     if (dashBtn) {
-        dashBtn.addEventListener('touchstart', () => state.keys[' '] = true);
-        dashBtn.addEventListener('touchend', () => state.keys[' '] = false);
+        dashBtn.addEventListener('touchstart', (e) => { e.preventDefault(); state.keys[' '] = true; });
+        dashBtn.addEventListener('touchend', (e) => { e.preventDefault(); state.keys[' '] = false; });
     }
     const shootBtn = document.getElementById('mobile-shoot-btn');
     if (shootBtn) {
-        shootBtn.addEventListener('touchstart', () => state.isFiring = true);
-        shootBtn.addEventListener('touchend', () => state.isFiring = false);
+        shootBtn.addEventListener('touchstart', (e) => { e.preventDefault(); state.isFiring = true; });
+        shootBtn.addEventListener('touchend', (e) => { e.preventDefault(); state.isFiring = false; });
+    }
+    const shopBtn = document.getElementById('mobile-shop-btn');
+    if (shopBtn) {
+        shopBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (state.waveInProgress) GAME.forfeit(state);
+            else {
+                const shop = document.getElementById('shop-menu');
+                if (shop.classList.contains('hidden')) GAME.openShop(state);
+                else GAME.closeShop();
+            }
+        });
+    }
+    const grenadeBtn = document.getElementById('mobile-grenade-btn');
+    if (grenadeBtn) {
+        grenadeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent('throw-grenade')); });
+    }
+
+    // Joystick Logic
+    const joyArea = document.getElementById('joystick-area');
+    const joyStick = document.getElementById('joystick-stick');
+    const joyBase = document.getElementById('joystick-base');
+    if (joyArea && joyStick && joyBase) {
+        const handleJoy = (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = joyBase.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            let dx = touch.clientX - centerX;
+            let dy = touch.clientY - centerY;
+            const dist = Math.hypot(dx, dy);
+            const maxDist = rect.width / 2;
+            if (dist > maxDist) { dx *= maxDist / dist; dy *= maxDist / dist; }
+            joyStick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+            state.mobileInput.active = true;
+            state.mobileInput.x = dx / maxDist;
+            state.mobileInput.y = dy / maxDist;
+        };
+        joyArea.addEventListener('touchstart', handleJoy);
+        joyArea.addEventListener('touchmove', handleJoy);
+        joyArea.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            joyStick.style.transform = `translate(-50%, -50%)`;
+            state.mobileInput.active = false;
+        });
     }
 };

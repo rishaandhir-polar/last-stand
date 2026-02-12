@@ -1,8 +1,9 @@
 GAME.draw = function (state) {
     const { ctx, canvas, walls } = state;
     GAME.drawMap(ctx, canvas, walls);
+    GAME.drawGroundTraps(ctx, state);
     GAME.drawEntities(ctx, state);
-    GAME.drawFX(ctx, state);
+    GAME.drawTopFX(ctx, state);
     if (state.buildMode) GAME.drawBuildGhost(ctx, state);
 };
 
