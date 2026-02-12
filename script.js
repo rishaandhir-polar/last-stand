@@ -19,6 +19,15 @@
         window.addEventListener('throw-grenade', () => GAME.throwGrenade(state));
         window.addEventListener('open-turret-menu', (e) => GAME.openTurretMenu(state, e.detail.turret));
 
+        // Safari Mobile: Resume AudioContext on first interaction
+        const resumeAudio = () => {
+            GAME.soundManager.resume();
+            window.removeEventListener('touchstart', resumeAudio);
+            window.removeEventListener('mousedown', resumeAudio);
+        };
+        window.addEventListener('touchstart', resumeAudio);
+        window.addEventListener('mousedown', resumeAudio);
+
         requestAnimationFrame(update);
     }
 

@@ -9,6 +9,12 @@ class SoundManager {
         this.sfxMuted = false;
     }
 
+    async resume() {
+        if (this.ctx.state === 'suspended') {
+            await this.ctx.resume();
+        }
+    }
+
     async loadSound(name, url) {
         try {
             const response = await fetch(url);
