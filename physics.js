@@ -83,9 +83,6 @@ GAME.handlePlayerMovement = function (state, timestamp, scale, isMenuOpen) {
         const rotationSpeed = 0.05 * scale;
         if (keys['z'] || keys['Z']) player.angle -= rotationSpeed;
         if (keys['c'] || keys['C']) player.angle += rotationSpeed;
-        if ((keys['x'] || keys['X']) && !player.isDashing && !state.buildMode) {
-            if (timestamp > state.fireCooldown) window.dispatchEvent(new CustomEvent('player-shoot', { detail: { timestamp } }));
-        }
     } else {
         player.angle = Math.atan2(state.mouseY - player.y, state.mouseX - player.x);
     }
