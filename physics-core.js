@@ -24,3 +24,20 @@ GAME.explodeGeneric = function (state, x, y, maxDmg, maxRadius, hurtPlayer) {
         if (fd > 0) { state.player.hp -= fd; if (state.player.hp <= 0) GAME.doGameOver(state); GAME.updateHUD(state); }
     }
 };
+
+GAME.updateFX = function (state, scale) {
+    // Update Muzzle Flashes
+    for (let i = state.muzzleFlashes.length - 1; i >= 0; i--) {
+        state.muzzleFlashes[i].life -= scale;
+        if (state.muzzleFlashes[i].life <= 0) state.muzzleFlashes.splice(i, 1);
+    }
+
+    // Update Particles (Blood, Fire, Smoke)
+    for (let i = state.particles.length - 1; i >= 0; i--) {
+        let p = state.particles[i];
+        p.x += p.vx * scale;
+        p.y += p.vy * scale;
+        p.life -= scale;
+        if (p.life <= 0) state.particles.splice(i, 1);
+    }
+};

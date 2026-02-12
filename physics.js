@@ -21,6 +21,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     GAME.updateZombies(state, timestamp, scale);
     GAME.updateEnemyBullets(state, scale);
     GAME.updateSystemItems(state, timestamp);
+    GAME.updateFX(state, scale);
 };
 
 GAME.handlePlayerMovement = function (state, timestamp, scale) {
