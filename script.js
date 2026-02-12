@@ -15,6 +15,20 @@
         GAME.openShop(state);
         GAME.updateHUD(state);
 
+        // Auto-Update Logic
+        GAME.currentVersion = "1.0.2";
+        const checkForUpdates = async () => {
+            try {
+                const response = await fetch('app-version.json?t=' + Date.now());
+                const data = await response.json();
+                if (data.version !== GAME.currentVersion) {
+                    GAME.showNotification("UPDATE FOUND", "Installing new version...");
+                    setTimeout(() => location.reload(), 2000);
+                }
+            } catch (e) { /* silent fail */ }
+        };
+        setInterval(checkForUpdates, 30000); // Check every 30s
+
         window.addEventListener('player-shoot', (e) => GAME.shoot(state, e.detail?.timestamp || performance.now()));
         window.addEventListener('place-build', () => GAME.placeBuild(state));
         window.addEventListener('throw-grenade', () => GAME.throwGrenade(state));
