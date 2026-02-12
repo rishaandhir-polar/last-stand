@@ -43,6 +43,7 @@ GAME.doGameOver = function (state) {
     const finalWave = document.getElementById('final-wave');
     if (finalWave) finalWave.innerText = state.wave;
     state.gameOver = true;
+    if (state.lastWaveMoney !== undefined) state.player.money = state.lastWaveMoney;
 };
 
 GAME.toggleSettings = function () {
@@ -72,6 +73,6 @@ GAME.updateControlDesc = function (mode) {
         if (desc) desc.innerText = "Move: WASD | Aim: Mouse | Shoot: Click (Computer Only)";
     } else {
         if (btn) btn.innerText = "Keyboard Only (Z/C to Aim)";
-        if (desc) desc.innerText = "Move: WASD | Aim: Z / C | Shoot: Space (Computer Only)";
+        if (desc) desc.innerText = "Move: WASD | Aim: Z / C | Shoot: X | Dash: Shift (Computer Only)";
     }
 };

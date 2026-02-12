@@ -21,7 +21,8 @@ GAME.state = {
     controlMode: 'mouse',
     selectedTurret: null,
     buildMode: null,
-    buildRotation: 0
+    buildRotation: 0,
+    lastWaveMoney: 100
 };
 
 GAME.updateState = function (updates) {

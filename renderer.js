@@ -8,11 +8,38 @@ GAME.draw = function (state) {
 
 GAME.drawBuildGhost = function (ctx, state) {
     const { mouseX, mouseY, buildRotation, buildMode } = state;
-    ctx.save(); ctx.globalAlpha = 0.5; ctx.translate(mouseX, mouseY); ctx.rotate(buildRotation);
-    ctx.fillStyle = '#7f8c8d';
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.translate(mouseX, mouseY);
+    ctx.rotate(buildRotation);
+
     if (buildMode === 'turret') {
-        ctx.fillRect(-10, -10, 20, 20); ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#7f8c8d';
+        ctx.fillRect(-10, -10, 20, 20);
+        ctx.fillStyle = '#3498db';
+        ctx.beginPath();
+        ctx.arc(0, 0, 8, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (buildMode === 'landmine') {
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.arc(0, 0, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(0, 0, 3, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (buildMode === 'spike') {
+        ctx.strokeStyle = '#999';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(i * Math.PI / 2) * 15, Math.sin(i * Math.PI / 2) * 15);
+            ctx.lineTo(0, 0);
+            ctx.stroke();
+        }
     } else {
+        ctx.fillStyle = '#7f8c8d';
         ctx.fillRect(-40, -10, 80, 20);
     }
     ctx.restore();

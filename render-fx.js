@@ -28,4 +28,28 @@ GAME.drawFX = function (ctx, state) {
         ctx.fillStyle = '#7f8c8d'; ctx.fillRect(t.x - 10, t.y - 10, 20, 20);
         ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(t.x, t.y, 8, 0, Math.PI * 2); ctx.fill();
     });
+
+    // Draw Landmines
+    state.mines.forEach(m => {
+        ctx.fillStyle = '#333'; ctx.beginPath(); ctx.arc(m.x, m.y, 10, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(m.x, m.y, 3, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Draw Spikes
+    state.spikes.forEach(s => {
+        ctx.fillStyle = '#999';
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
+            ctx.moveTo(s.x + Math.cos(i * Math.PI / 2) * 15, s.y + Math.sin(i * Math.PI / 2) * 15);
+            ctx.lineTo(s.x, s.y);
+            ctx.stroke();
+        }
+    });
+
+    // Draw Thrown Grenades
+    state.thrownGrenades.forEach(g => {
+        ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.rotation);
+        ctx.fillStyle = '#2d5a27'; ctx.fillRect(-6, -8, 12, 16);
+        ctx.restore();
+    });
 };
