@@ -37,13 +37,30 @@ GAME.drawFX = function (ctx, state) {
 
     // Draw Spikes
     state.spikes.forEach(s => {
+        // Base plate
+        ctx.fillStyle = '#555';
+        ctx.fillRect(s.x - 20, s.y - 20, 40, 40);
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(s.x - 20, s.y - 20, 40, 40);
+
+        // Metal Spikes
         ctx.fillStyle = '#999';
-        for (let i = 0; i < 4; i++) {
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 1;
+        const positions = [
+            [-12, -12], [0, -12], [12, -12],
+            [-12, 0], [0, 0], [12, 0],
+            [-12, 12], [0, 12], [12, 12]
+        ];
+        positions.forEach(pos => {
             ctx.beginPath();
-            ctx.moveTo(s.x + Math.cos(i * Math.PI / 2) * 15, s.y + Math.sin(i * Math.PI / 2) * 15);
-            ctx.lineTo(s.x, s.y);
+            ctx.moveTo(s.x + pos[0], s.y + pos[1] - 8); // Top
+            ctx.lineTo(s.x + pos[0] - 4, s.y + pos[1] + 4); // Left
+            ctx.lineTo(s.x + pos[0] + 4, s.y + pos[1] + 4); // Right
+            ctx.closePath();
+            ctx.fill();
             ctx.stroke();
-        }
+        });
     });
 
     // Draw Thrown Grenades

@@ -47,6 +47,18 @@ GAME.bloodExplosion = function (state, x, y) {
     for (let i = 0; i < 10; i++) state.particles.push({ x, y, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8, life: 40, color: '#c0392b' });
 };
 
+GAME.spawnBlood = function (state, x, y, count) {
+    for (let i = 0; i < count; i++) {
+        state.particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 5,
+            vy: (Math.random() - 0.5) * 5,
+            life: 20 + Math.random() * 20,
+            color: '#c0392b'
+        });
+    }
+};
+
 GAME.updateFX = function (state, scale) {
     // Update Muzzle Flashes
     for (let i = state.muzzleFlashes.length - 1; i >= 0; i--) {
