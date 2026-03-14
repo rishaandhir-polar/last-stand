@@ -1,10 +1,19 @@
 GAME.draw = function (state) {
     const { ctx, canvas, walls } = state;
+    
+    ctx.save();
+    if (state.screenShake > 0) {
+        state.screenShake -= 1;
+        ctx.translate((Math.random() - 0.5) * state.screenShake, (Math.random() - 0.5) * state.screenShake);
+    }
+
     GAME.drawMap(ctx, canvas, walls);
     GAME.drawGroundTraps(ctx, state);
     GAME.drawEntities(ctx, state);
     GAME.drawTopFX(ctx, state);
     if (state.buildMode) GAME.drawBuildGhost(ctx, state);
+    
+    ctx.restore();
 };
 
 GAME.drawBuildGhost = function (ctx, state) {

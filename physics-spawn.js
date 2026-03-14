@@ -40,3 +40,15 @@ GAME.spawnBoss = function (state) {
     else { x = -100; y = Math.random() * canvas.height; }
     state.zombies.push({ x, y, hp: 2000 + (wave * 200), maxHp: 2000 + (wave * 200), radius: 60, speed: 1.5, color: '#2c3e50', reward: 1000, type: 'boss' });
 };
+
+GAME.spawnMini = function (state, x, y) {
+    state.zombies.push({
+        x, y,
+        hp: 20, maxHp: 20,
+        radius: 12,
+        speed: 4,
+        color: '#f1c40f',
+        reward: 2,
+        type: 'mini'
+    });
+};

@@ -22,6 +22,7 @@ GAME.state = {
     selectedTurret: null,
     buildMode: null,
     buildRotation: 0,
+    screenShake: 0,
     lastWaveMoney: 100
 };
 

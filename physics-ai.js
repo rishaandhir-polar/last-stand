@@ -26,8 +26,8 @@ GAME.updateZombies = function (state, timestamp, scale) {
             GAME.updateHUD(state);
         }
 
-        if (z.type === 'shooter' || z.type === 'shotgunner' || z.type === 'ar_gunner' || z.type === 'flamethrower' || z.type === 'boss') {
-            if (dToP < 300) { z.x -= Math.cos(angle) * z.speed * scale; z.y -= Math.sin(angle) * z.speed * scale; }
+        if (z.type === 'shooter' || z.type === 'shotgunner' || z.type === 'ar_gunner' || z.type === 'flamethrower' || z.type === 'boss' || z.type === 'spawner') {
+            if (dToP < (z.type === 'boss' ? 400 : 300)) { z.x -= Math.cos(angle) * z.speed * scale; z.y -= Math.sin(angle) * z.speed * scale; }
             GAME.handleShooterAI(state, z, angle);
         }
         if (z.type === 'exploder' && dToP < 50) { zombies.splice(i, 1); GAME.explodeGeneric(state, z.x, z.y, 30, 200, true); }
@@ -62,9 +62,36 @@ GAME.handleShooterAI = function (state, z, angle) {
             z.lastShot = now;
         }
     }
-    if (z.type === 'boss' && (!z.lastShot || now - z.lastShot > 1500)) {
-        enemyBullets.push({ x: z.x, y: z.y, vx: Math.cos(angle) * 12, vy: Math.sin(angle) * 12, dmg: 75, radius: 10 });
-        GAME.soundManager.explode();
+    if (z.type === 'boss') {
+        const hpPct = z.hp / z.maxHp;
+        const cooldown = hpPct < 0.5 ? 1000 : 1500;
+        
+        if (!z.lastShot || now - z.lastShot > cooldown) {
+            if (hpPct < 0.5) {
+                // Triple Shot Spread Phase
+                for (let k = -1; k <= 1; k++) {
+                    enemyBullets.push({ x: z.x, y: z.y, vx: Math.cos(angle + k * 0.2) * 12, vy: Math.sin(angle + k * 0.2) * 12, dmg: 25, radius: 8 });
+                }
+            } else {
+                // Normal Single Shot Phase
+                enemyBullets.push({ x: z.x, y: z.y, vx: Math.cos(angle) * 12, vy: Math.sin(angle) * 12, dmg: 25, radius: 8 });
+            }
+            GAME.soundManager.explode();
+            state.screenShake = Math.max(state.screenShake, 5);
+            z.lastShot = now;
+        }
+
+        // Boss Summons Minions (Every 10s)
+        if (!z.lastSummon || now - z.lastSummon > 10000) {
+            for (let i = 0; i < 3; i++) GAME.spawnMini(state, z.x + (Math.random() - 0.5) * 50, z.y + (Math.random() - 0.5) * 50);
+            z.lastSummon = now;
+            GAME.soundManager.playFile('laser', 0.3);
+        }
+    }
+    
+    if (z.type === 'spawner' && (!z.lastShot || now - z.lastShot > 4000)) {
+        for (let i = 0; i < 2; i++) GAME.spawnMini(state, z.x, z.y);
+        GAME.soundManager.playFile('spikes', 0.2);
         z.lastShot = now;
     }
-};
+}

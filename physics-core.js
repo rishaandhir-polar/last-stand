@@ -13,6 +13,7 @@ GAME.checkBossDrop = function (state, z) {
 
 GAME.explodeGeneric = function (state, x, y, maxDmg, maxRadius, hurtPlayer) {
     GAME.soundManager.explode();
+    state.screenShake = Math.max(state.screenShake, 10);
     state.muzzleFlashes.push({ x, y, life: 20, radius: maxRadius });
     for (let i = 0; i < 20; i++) state.particles.push({ x, y, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10, life: 30 + Math.random() * 20, color: Math.random() > 0.5 ? '#f39c12' : '#c0392b' });
 
