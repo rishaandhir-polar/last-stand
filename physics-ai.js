@@ -2,6 +2,7 @@ GAME.updateZombies = function (state, timestamp, scale) {
     const { zombies, player, walls, worldOpacity } = state;
     for (let i = zombies.length - 1; i >= 0; i--) {
         let z = zombies[i];
+        if (!z) continue;
         let angle = Math.atan2(player.y - z.y, player.x - z.x);
         z.x += Math.cos(angle) * z.speed * scale; z.y += Math.sin(angle) * z.speed * scale;
 

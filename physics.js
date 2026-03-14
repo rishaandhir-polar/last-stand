@@ -107,8 +107,9 @@ GAME.updateTurrets = function (state, timestamp, scale) {
     turrets.forEach(t => {
         if (t.ammoRegen > 0) t.ammo = Math.min(t.maxAmmo, t.ammo + (t.ammoRegen / 60) * scale);
         if (t.ammo < 1) return;
-        let target = null, minDist = t.range;
+        const zombies = state.zombies;
         zombies.forEach(z => {
+            if (!z) return;
             let d = Math.hypot(z.x - t.x, z.y - t.y);
             if (d < minDist) { minDist = d; target = z; }
         });
@@ -148,8 +149,10 @@ GAME.updateTraps = function (state, scale) {
     const { mines, spikes, zombies } = state;
     for (let i = mines.length - 1; i >= 0; i--) {
         let m = mines[i];
-        for (let j = zombies.length - 1; j >= 0; j--) {
-            if (Math.hypot(zombies[j].x - m.x, zombies[j].y - m.y) < 30) {
+        for (let j = state.zombies.length - 1; j >= 0; j--) {
+            let z = state.zombies[j];
+            if (!z) continue;
+            if (Math.hypot(z.x - m.x, z.y - m.y) < 30) {
                 GAME.explodeGeneric(state, m.x, m.y, 80, 150, false);
                 mines.splice(i, 1);
                 break;
@@ -157,7 +160,8 @@ GAME.updateTraps = function (state, scale) {
         }
     }
     spikes.forEach(s => {
-        zombies.forEach(z => {
+        state.zombies.forEach(z => {
+            if (!z) return;
             if (Math.hypot(z.x - s.x, z.y - s.y) < 40) {
                 z.hp -= 0.5 * scale;
             }

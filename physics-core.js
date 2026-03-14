@@ -16,7 +16,9 @@ GAME.explodeGeneric = function (state, x, y, maxDmg, maxRadius, hurtPlayer) {
     state.muzzleFlashes.push({ x, y, life: 20, radius: maxRadius });
     for (let i = 0; i < 20; i++) state.particles.push({ x, y, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10, life: 30 + Math.random() * 20, color: Math.random() > 0.5 ? '#f39c12' : '#c0392b' });
 
-    state.zombies.forEach((t, i) => {
+    for (let i = state.zombies.length - 1; i >= 0; i--) {
+        const t = state.zombies[i];
+        if (!t) continue;
         let d = Math.hypot(t.x - x, t.y - y);
         if (d < maxRadius) {
             let dmg = ((maxRadius - d) / maxRadius) * maxDmg;
@@ -25,11 +27,10 @@ GAME.explodeGeneric = function (state, x, y, maxDmg, maxRadius, hurtPlayer) {
                 state.player.money += t.reward;
                 GAME.bloodExplosion(state, t.x, t.y);
                 GAME.checkBossDrop(state, t);
-                state.zombies[i] = null;
+                state.zombies.splice(i, 1);
             }
         }
-    });
-    state.zombies = state.zombies.filter(z => z !== null);
+    }
     GAME.updateHUD(state);
 
     if (hurtPlayer) {

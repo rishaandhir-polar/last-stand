@@ -7,6 +7,7 @@ GAME.updateBullets = function (state, scale) {
         if (b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) { bullets.splice(i, 1); continue; }
         for (let j = zombies.length - 1; j >= 0; j--) {
             let z = zombies[j];
+            if (!z) continue;
             if (Math.hypot(b.x - z.x, b.y - z.y) < z.radius) {
                 z.hp -= b.dmg; GAME.spawnBlood(state, z.x, z.y, 5);
                 if (z.hp <= 0) { zombies.splice(j, 1); player.money += z.reward; GAME.checkBossDrop(state, z); GAME.updateHUD(state); }

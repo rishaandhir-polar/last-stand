@@ -2,6 +2,7 @@ GAME.drawEntities = function (ctx, state) {
     const { player, zombies, bullets, enemyBullets } = state;
 
     zombies.forEach(z => {
+        if (!z) return;
         ctx.fillStyle = z.color;
         ctx.beginPath(); ctx.arc(z.x, z.y, z.radius, 0, Math.PI * 2); ctx.fill();
         ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.stroke();
