@@ -12,7 +12,7 @@
         GAME.setupInput(state);
         GAME.soundManager.loadAllSounds();
 
-        GAME.openShop(state);
+        GAME.openManual(state);
         GAME.updateHUD(state);
 
         // Auto-Update Logic
@@ -21,7 +21,8 @@
             try {
                 const response = await fetch('app-version.json?t=' + Date.now());
                 const data = await response.json();
-                if (data.version !== GAME.currentVersion) {
+                // Only update if the server version is strictly GREATER than current
+                if (data.version && data.version > GAME.currentVersion) {
                     GAME.showNotification("UPDATE FOUND", "Installing new version...");
                     setTimeout(() => location.reload(), 2000);
                 }
@@ -81,6 +82,7 @@
     window.closeTurretMenu = () => GAME.closeTurretMenu(GAME.state);
     window.upgradeDrone = (type) => GAME.upgradeDrone(GAME.state, type);
     window.closeDroneMenu = () => GAME.closeDroneMenu(GAME.state);
+    window.closeManual = () => GAME.closeManual(GAME.state);
     window.toggleSettings = () => GAME.toggleSettings();
     window.toggleMusic = () => {
         const muted = GAME.soundManager.toggleMusic();

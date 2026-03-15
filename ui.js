@@ -79,6 +79,18 @@ GAME.closeDroneMenu = function (state) {
     if (menu) menu.classList.add('hidden');
 };
 
+GAME.openManual = function (state) {
+    const manual = document.getElementById('field-manual');
+    if (manual) manual.classList.remove('hidden');
+};
+
+GAME.closeManual = function (state) {
+    const manual = document.getElementById('field-manual');
+    if (manual) manual.classList.add('hidden');
+    // Open shop after closing initial manual
+    GAME.openShop(state);
+};
+
 GAME.updateControlDesc = function (mode) {
     const desc = document.getElementById('control-desc');
     const btn = document.getElementById('control-mode-btn');

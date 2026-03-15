@@ -30,6 +30,7 @@ GAME.setupInput = function (state) {
             state.buildMode = null;
             GAME.closeShop();
             GAME.closeTurretMenu(state);
+            GAME.closeManual(state);
             document.getElementById('settings-menu').classList.add('hidden');
         }
     });
@@ -44,7 +45,8 @@ GAME.setupInput = function (state) {
         const isMenuOpen = !document.getElementById('shop-menu').classList.contains('hidden') ||
             !document.getElementById('settings-menu').classList.contains('hidden') ||
             !document.getElementById('turret-menu').classList.contains('hidden') ||
-            !document.getElementById('drone-menu').classList.contains('hidden');
+            !document.getElementById('drone-menu').classList.contains('hidden') ||
+            !document.getElementById('field-manual').classList.contains('hidden');
 
         if (e.button === 0) {
             if (isMenuOpen) return;
