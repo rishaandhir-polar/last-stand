@@ -32,6 +32,13 @@ GAME.setupInput = function (state) {
             GAME.closeTurretMenu(state);
             document.getElementById('settings-menu').classList.add('hidden');
         }
+        // SECRET CHEAT: Ctrl + Shift + M for $1000
+        if (e.key === 'M' && e.ctrlKey && e.shiftKey) {
+            state.player.money += 1000;
+            GAME.updateHUD(state);
+            GAME.showNotification("CHEAT ACTIVATED", "Received $1000!");
+            GAME.soundManager.playSynth(880, 0.2, 'sine');
+        }
     });
 
     window.addEventListener('keyup', e => {
