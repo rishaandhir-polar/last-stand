@@ -39,6 +39,15 @@ GAME.setupInput = function (state) {
             GAME.showNotification("CHEAT ACTIVATED", "Received $1000!");
             GAME.soundManager.playSynth(880, 0.2, 'sine');
         }
+
+        // Classic DOOM Cheat: IDKFA
+        state.cheatBuffer += e.key.toLowerCase();
+        if (state.cheatBuffer.length > 10) state.cheatBuffer = state.cheatBuffer.slice(-10);
+        
+        if (state.cheatBuffer.endsWith('idkfa')) {
+            GAME.applyFullCheat(state);
+            state.cheatBuffer = "";
+        }
     });
 
     window.addEventListener('keyup', e => {

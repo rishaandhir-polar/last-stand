@@ -23,6 +23,7 @@ GAME.state = {
     buildMode: null,
     buildRotation: 0,
     screenShake: 0,
+    cheatBuffer: "",
     lastWaveMoney: 100
 };
 
