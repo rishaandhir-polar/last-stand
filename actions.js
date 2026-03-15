@@ -170,20 +170,3 @@ GAME.upgradeDrone = function (state, type) {
     const stats = document.getElementById('drone-stats');
     if (stats) stats.innerText = `Mode: ${d.mode.toUpperCase()} | Dmg: ${d.damage}`;
 };
-
-GAME.applyFullCheat = function (state) {
-    const { player } = state;
-    player.money += 10000;
-    player.ammo = 999;
-    player.hp = player.maxHp;
-    player.grenades = player.maxGrenades;
-    
-    const allWeapons = ['pistol', 'shotgun', 'ar', 'sniper', 'flamethrower'];
-    allWeapons.forEach(w => {
-        if (!player.unlockedWeapons.includes(w)) player.unlockedWeapons.push(w);
-    });
-    
-    GAME.showNotification("IDKFA", "SYSTEM OVERRIDE: GOD MODE ENGAGED");
-    GAME.soundManager.playFile('laser', 0.5);
-    GAME.updateHUD(state);
-};

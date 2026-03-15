@@ -36,7 +36,9 @@
 
 #shop-menu,
 #game-over,
-#settings-menu {
+#settings-menu,
+#turret-menu,
+#drone-menu {
     position: absolute;
     top: 50%;
     left: 50%;

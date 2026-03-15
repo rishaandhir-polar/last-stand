@@ -20,10 +20,10 @@ GAME.state = {
     isMobile: false, mobileInput: { x: 0, y: 0, active: false },
     controlMode: 'mouse',
     selectedTurret: null,
+    selectedDrone: null,
     buildMode: null,
     buildRotation: 0,
     screenShake: 0,
-    cheatBuffer: "",
     lastWaveMoney: 100
 };
 

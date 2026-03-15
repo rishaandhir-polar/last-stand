@@ -32,22 +32,6 @@ GAME.setupInput = function (state) {
             GAME.closeTurretMenu(state);
             document.getElementById('settings-menu').classList.add('hidden');
         }
-        // SECRET CHEAT: Ctrl + Shift + M for $1000
-        if (e.key === 'M' && e.ctrlKey && e.shiftKey) {
-            state.player.money += 1000;
-            GAME.updateHUD(state);
-            GAME.showNotification("CHEAT ACTIVATED", "Received $1000!");
-            GAME.soundManager.playSynth(880, 0.2, 'sine');
-        }
-
-        // Classic DOOM Cheat: IDKFA
-        if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
-            state.cheatBuffer = (state.cheatBuffer + e.key.toLowerCase()).slice(-5);
-            if (state.cheatBuffer === 'idkfa') {
-                GAME.applyFullCheat(state);
-                state.cheatBuffer = "";
-            }
-        }
     });
 
     window.addEventListener('keyup', e => {
@@ -65,8 +49,8 @@ GAME.setupInput = function (state) {
             if (isMenuOpen) return;
 
             let clickedTurret = null, clickedDrone = null;
-            state.turrets.forEach(t => { if (Math.hypot(e.clientX - t.x, e.clientY - t.y) < 30) clickedTurret = t; });
-            state.drones.forEach(d => { if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 30) clickedDrone = d; });
+            state.turrets.forEach(t => { if (Math.hypot(e.clientX - t.x, e.clientY - t.y) < 40) clickedTurret = t; });
+            state.drones.forEach(d => { if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 40) clickedDrone = d; });
 
             if (clickedTurret) window.dispatchEvent(new CustomEvent('open-turret-menu', { detail: { turret: clickedTurret } }));
             else if (clickedDrone) window.dispatchEvent(new CustomEvent('open-drone-menu', { detail: { drone: clickedDrone } }));
