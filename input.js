@@ -41,12 +41,12 @@ GAME.setupInput = function (state) {
         }
 
         // Classic DOOM Cheat: IDKFA
-        state.cheatBuffer += e.key.toLowerCase();
-        if (state.cheatBuffer.length > 10) state.cheatBuffer = state.cheatBuffer.slice(-10);
-        
-        if (state.cheatBuffer.endsWith('idkfa')) {
-            GAME.applyFullCheat(state);
-            state.cheatBuffer = "";
+        if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
+            state.cheatBuffer = (state.cheatBuffer + e.key.toLowerCase()).slice(-5);
+            if (state.cheatBuffer === 'idkfa') {
+                GAME.applyFullCheat(state);
+                state.cheatBuffer = "";
+            }
         }
     });
 
