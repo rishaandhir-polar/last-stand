@@ -43,7 +43,8 @@ GAME.setupInput = function (state) {
     window.addEventListener('mousedown', e => {
         const isMenuOpen = !document.getElementById('shop-menu').classList.contains('hidden') ||
             !document.getElementById('settings-menu').classList.contains('hidden') ||
-            !document.getElementById('turret-menu').classList.contains('hidden');
+            !document.getElementById('turret-menu').classList.contains('hidden') ||
+            !document.getElementById('drone-menu').classList.contains('hidden');
 
         if (e.button === 0) {
             if (isMenuOpen) return;
