@@ -31,6 +31,23 @@ GAME.drawTopFX = function (ctx, state) {
         ctx.fillStyle = '#2d5a27'; ctx.fillRect(-6, -8, 12, 16);
         ctx.restore();
     });
+
+    // Draw Drones
+    state.drones.forEach(d => {
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        // Drone Body
+        ctx.fillStyle = '#666'; ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fill();
+        // Arms
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath(); 
+            ctx.moveTo(Math.cos(i * Math.PI / 2 + (performance.now() / 100)) * 20, Math.sin(i * Math.PI / 2 + (performance.now() / 100)) * 20); 
+            ctx.lineTo(0, 0); ctx.stroke();
+        }
+        ctx.restore();
+    });
 };
 
 GAME.drawGroundTraps = function (ctx, state) {

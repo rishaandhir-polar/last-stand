@@ -29,6 +29,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     GAME.updateEnemyBullets(state, scale);
     GAME.updateItems(state, scale);
     GAME.updateTurrets(state, timestamp, scale);
+    GAME.updateDrones(state, timestamp, scale);
     GAME.updateGrenades(state, timestamp, scale);
     GAME.updateTraps(state, scale);
     GAME.updateSystemItems(state, timestamp);
@@ -143,6 +144,53 @@ GAME.updateGrenades = function (state, timestamp, scale) {
             thrownGrenades.splice(i, 1);
         }
     }
+};
+
+GAME.updateDrones = function (state, timestamp, scale) {
+    const { drones, player, zombies, bullets, keys } = state;
+
+    drones.forEach(d => {
+        // Movement Logic
+        if (d.mode === 'follow') {
+            d.tx = player.x; d.ty = player.y;
+            let distToPlayer = Math.hypot(player.x - d.x, player.y - d.y);
+            if (distToPlayer > 80) {
+                let angle = Math.atan2(player.y - d.y, player.x - d.x);
+                d.x += Math.cos(angle) * 5 * scale;
+                d.y += Math.sin(angle) * 5 * scale;
+            }
+        } else if (d.mode === 'manual') {
+            let dx = (keys['l'] ? 1 : 0) - (keys['j'] ? 1 : 0);
+            let dy = (keys['k'] ? 1 : 0) - (keys['i'] ? 1 : 0);
+            d.x += dx * 6 * scale;
+            d.y += dy * 6 * scale;
+        } else if (d.mode === 'stay') {
+            let distToTarget = Math.hypot(d.tx - d.x, d.ty - d.y);
+            if (distToTarget > 5) {
+                let angle = Math.atan2(d.ty - d.y, d.tx - d.x);
+                d.x += Math.cos(angle) * 4 * scale;
+                d.y += Math.sin(angle) * 4 * scale;
+            }
+        }
+
+        // Combat Logic
+        let target = null, minDist = d.range;
+        zombies.forEach(z => {
+            if (!z) return;
+            let dist = Math.hypot(z.x - d.x, z.y - d.y);
+            if (dist < minDist) { minDist = dist; target = z; }
+        });
+
+        if (target && timestamp - (d.lastShot || 0) > 600) {
+            let angle = Math.atan2(target.y - d.y, target.x - d.x);
+            bullets.push({ x: d.x, y: d.y, vx: Math.cos(angle) * 12, vy: Math.sin(angle) * 12, dmg: d.damage, color: '#f1c40f' });
+            d.lastShot = timestamp;
+            GAME.soundManager.playFile('pistol', 0.1);
+        }
+
+        // Bounce effect
+        d.y += Math.sin(timestamp / 200) * 0.5;
+    });
 };
 
 GAME.updateTraps = function (state, scale) {

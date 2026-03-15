@@ -7,7 +7,7 @@ GAME.state = {
         stamina: 100, maxStamina: 100, isDashing: false, lastDashTime: 0,
         angle: 0, radius: 20, carrying: null
     },
-    zombies: [], bullets: [], enemyBullets: [], items: [], turrets: [],
+    zombies: [], bullets: [], enemyBullets: [], items: [], turrets: [], drones: [],
     walls: [], mines: [], spikes: [], thrownGrenades: [],
     muzzleFlashes: [], particles: [],
     keys: {},

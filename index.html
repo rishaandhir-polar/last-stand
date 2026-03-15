@@ -52,6 +52,13 @@
                     <span class="cost">$350</span>
                 </div>
             </div>
+            <div class="shop-item" onclick="buy('drone')">
+                <div class="icon">🛸</div>
+                <div class="details">
+                    <span class="name">Combat Drone</span>
+                    <span class="cost">$250</span>
+                </div>
+            </div>
             <div class="shop-item" onclick="buy('wall_wood')">
                 <div class="icon">🪵</div>
                 <div class="details"><span class="name">Wood Wall</span><span class="cost">$50</span></div>
@@ -107,6 +114,24 @@
                 </div>
             </div>
             <button onclick="closeTurretMenu()" class="close-btn">CLOSE</button>
+        </div>
+
+        <div id="drone-menu" class="hidden">
+            <h2 id="drone-title">DRONE CONFIG</h2>
+            <div id="drone-stats">Mode: Follow | Dmg: 10</div>
+            <div class="shop-item" onclick="upgradeDrone('mode_follow')">
+                <div class="details"><span class="name">Follow Player</span><span class="cost">FREE</span></div>
+            </div>
+            <div class="shop-item" onclick="upgradeDrone('mode_stay')">
+                <div class="details"><span class="name">Stay at Spot</span><span class="cost">FREE</span></div>
+            </div>
+            <div class="shop-item" onclick="upgradeDrone('mode_manual')">
+                <div class="details"><span class="name">Manual Control (IJKL)</span><span class="cost">FREE</span></div>
+            </div>
+            <div class="shop-item" onclick="upgradeDrone('upgrade_damage')">
+                <div class="details"><span class="name">Upgrade Damage (+5)</span><span class="cost">$150</span></div>
+            </div>
+            <button onclick="closeDroneMenu()" class="close-btn">CLOSE</button>
         </div>
 
         <div id="notification-area" class="hidden">

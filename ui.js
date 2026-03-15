@@ -65,6 +65,20 @@ GAME.closeTurretMenu = function (state) {
     if (menu) menu.classList.add('hidden');
 };
 
+GAME.openDroneMenu = function (state, drone) {
+    state.selectedDrone = drone;
+    const menu = document.getElementById('drone-menu');
+    if (menu) menu.classList.remove('hidden');
+    const stats = document.getElementById('drone-stats');
+    if (stats) stats.innerText = `Mode: ${drone.mode.toUpperCase()} | Dmg: ${drone.damage}`;
+};
+
+GAME.closeDroneMenu = function (state) {
+    state.selectedDrone = null;
+    const menu = document.getElementById('drone-menu');
+    if (menu) menu.classList.add('hidden');
+};
+
 GAME.updateControlDesc = function (mode) {
     const desc = document.getElementById('control-desc');
     const btn = document.getElementById('control-mode-btn');

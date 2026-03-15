@@ -33,6 +33,7 @@
         window.addEventListener('place-build', () => GAME.placeBuild(state));
         window.addEventListener('throw-grenade', () => GAME.throwGrenade(state));
         window.addEventListener('open-turret-menu', (e) => GAME.openTurretMenu(state, e.detail.turret));
+        window.addEventListener('open-drone-menu', (e) => GAME.openDroneMenu(state, e.detail.drone));
 
         // Safari Mobile: Resume AudioContext on first interaction
         const resumeAudio = () => {
@@ -78,6 +79,8 @@
     window.openShop = () => { GAME.openShop(GAME.state); document.getElementById('settings-menu').classList.add('hidden'); };
     window.upgradeTurret = (type) => GAME.upgradeTurret(GAME.state, type);
     window.closeTurretMenu = () => GAME.closeTurretMenu(GAME.state);
+    window.upgradeDrone = (type) => GAME.upgradeDrone(GAME.state, type);
+    window.closeDroneMenu = () => GAME.closeDroneMenu(GAME.state);
     window.toggleSettings = () => GAME.toggleSettings();
     window.toggleMusic = () => {
         const muted = GAME.soundManager.toggleMusic();

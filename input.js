@@ -48,10 +48,12 @@ GAME.setupInput = function (state) {
         if (e.button === 0) {
             if (isMenuOpen) return;
 
-            let clickedTurret = null;
+            let clickedTurret = null, clickedDrone = null;
             state.turrets.forEach(t => { if (Math.hypot(e.clientX - t.x, e.clientY - t.y) < 30) clickedTurret = t; });
+            state.drones.forEach(d => { if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 30) clickedDrone = d; });
 
             if (clickedTurret) window.dispatchEvent(new CustomEvent('open-turret-menu', { detail: { turret: clickedTurret } }));
+            else if (clickedDrone) window.dispatchEvent(new CustomEvent('open-drone-menu', { detail: { drone: clickedDrone } }));
             else if (state.buildMode) window.dispatchEvent(new CustomEvent('place-build'));
             else {
                 state.isFiring = true;

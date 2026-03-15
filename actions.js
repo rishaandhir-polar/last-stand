@@ -53,6 +53,7 @@ GAME.buy = function (state, type) {
     else if (type === 'landmine') { cost = 80; name = "Landmine"; }
     else if (type === 'spike') { cost = 40; name = "Spike Trap"; }
     else if (type === 'grenade') { cost = 500; name = "Grenade"; }
+    else if (type === 'drone') { cost = 250; name = "Drone"; }
 
     if (player.money < cost) {
         GAME.showNotification("INSUFFICIENT FUNDS", `You need $${cost} for ${name}!`);
@@ -70,6 +71,7 @@ GAME.buy = function (state, type) {
     else if (type === 'landmine') { state.buildMode = 'landmine'; GAME.closeShop(); }
     else if (type === 'spike') { state.buildMode = 'spike'; GAME.closeShop(); }
     else if (type === 'grenade') { player.grenades = Math.min(player.maxGrenades, player.grenades + 1); player.money -= cost; }
+    else if (type === 'drone') { state.buildMode = 'drone'; GAME.closeShop(); }
 
     GAME.soundManager.click();
     GAME.updateHUD(state);
@@ -107,12 +109,14 @@ GAME.placeBuild = function (state) {
     if (state.buildMode === 'turret') cost = 350;
     else if (state.buildMode === 'landmine') cost = 80;
     else if (state.buildMode === 'spike') cost = 40;
+    else if (state.buildMode === 'drone') cost = 250;
     else cost = (state.buildMode === 'wood' ? 50 : state.buildMode === 'stone' ? 150 : 300);
 
     if (player.money >= cost) {
         if (state.buildMode === 'turret') state.turrets.push({ x: mouseX, y: mouseY, ammo: 50, maxAmmo: 50, cooldown: 500, range: 300, damage: 15, level: 1, lastShot: 0, ammoRegen: 0 });
         else if (state.buildMode === 'landmine') state.mines.push({ x: mouseX, y: mouseY });
         else if (state.buildMode === 'spike') state.spikes.push({ x: mouseX, y: mouseY });
+        else if (state.buildMode === 'drone') state.drones.push({ x: mouseX, y: mouseY, tx: mouseX, ty: mouseY, damage: 10, mode: 'follow', lastShot: 0, range: 250 });
         else state.walls.push({ x: mouseX, y: mouseY, hp: cost, maxHp: cost, type: state.buildMode, rotation: buildRotation });
 
         player.money -= cost;
@@ -149,4 +153,20 @@ GAME.upgradeTurret = function (state, type) {
     GAME.updateHUD(state);
     const stats = document.getElementById('turret-stats');
     if (stats) stats.innerText = `Level: ${t.level} | Ammo: ${t.ammo}/${t.maxAmmo}`;
+};
+
+GAME.upgradeDrone = function (state, type) {
+    const d = state.selectedDrone;
+    if (!d) return;
+    const { player } = state;
+
+    if (type === 'mode_follow') d.mode = 'follow';
+    else if (type === 'mode_stay') { d.mode = 'stay'; d.tx = d.x; d.ty = d.y; }
+    else if (type === 'mode_manual') d.mode = 'manual';
+    else if (type === 'upgrade_damage' && player.money >= 150) { d.damage += 5; player.money -= 150; }
+
+    GAME.soundManager.click();
+    GAME.updateHUD(state);
+    const stats = document.getElementById('drone-stats');
+    if (stats) stats.innerText = `Mode: ${d.mode.toUpperCase()} | Dmg: ${d.damage}`;
 };
