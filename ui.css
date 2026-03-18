@@ -159,3 +159,51 @@ button:hover {
     font-size: 13px;
     margin-top: 2px;
 }
+
+/* --- FIELD MANUAL ZOMBIE ICONS --- */
+.z-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 12px;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
+.z-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 80%;
+    transform: translateY(-50%);
+    background: #444;
+    height: 4px;
+    width: 10px;
+    border: 1px solid #000;
+    display: none;
+}
+
+.z-icon.barrel::after { display: block; }
+
+.z-icon.normal { background: #2ecc71; }
+.z-icon.fast { background: #e74c3c; width: 14px; height: 14px; }
+.z-icon.tank { background: #34495e; width: 26px; height: 26px; }
+.z-icon.shooter { background: #8e44ad; }
+.z-icon.ar { background: #2ecc71; }
+.z-icon.shotgun { background: #2ecc71; }
+.z-icon.flame { background: #2ecc71; }
+.z-icon.exploder { background: #d35400; }
+.z-icon.spawner { background: #f1c40f; }
+.z-icon.boss { background: #2c3e50; width: 36px; height: 36px; }
+.z-icon.boss::after { width: 18px; height: 8px; display: block; left: 75%; }
+
+.manual-section p {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 14px;
+}
