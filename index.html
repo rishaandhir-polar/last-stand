@@ -46,10 +46,10 @@
                 <div class="manual-section">
                     <h3>🔫 THE ARSENAL</h3>
                     <p>• <b>Pistol:</b> Standard issue. Infinite capacity via ammo crates.</p>
-                    <p>• <b>Shotgun:</b> 5-pellet spread ($200). Essential for clearing groups.</p>
-                    <p>• <b>AR:</b> Fully automatic rifle with high DPS (Unlocks mid-game).</p>
+                    <p>• <b>Shotgun:</b> 5-pellet spread. Essential for clearing groups.</p>
+                    <p>• <b>AR:</b> Fully automatic rifle with high DPS and range.</p>
                     <p>• <b>Sniper:</b> High-velocity rounds that pierce through lines of enemies.</p>
-                    <p>• <b>Flamethrower:</b> Continuous fire damage over time (Area denial).</p>
+                    <p>• <b>Flamethrower:</b> Continuous fire damage over time.</p>
                 </div>
 
                 <div class="manual-section">
@@ -87,6 +87,27 @@
                 <div class="details">
                     <span class="name">Shotgun</span>
                     <span class="cost">$200</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('ar')">
+                <div class="icon">🔫</div>
+                <div class="details">
+                    <span class="name">Assault Rifle</span>
+                    <span class="cost">$400</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('sniper')">
+                <div class="icon">🎯</div>
+                <div class="details">
+                    <span class="name">Sniper Rifle</span>
+                    <span class="cost">$600</span>
+                </div>
+            </div>
+            <div class="shop-item" onclick="buy('flamethrower')">
+                <div class="icon">🔥</div>
+                <div class="details">
+                    <span class="name">Flamethrower</span>
+                    <span class="cost">$800</span>
                 </div>
             </div>
             <div class="shop-item" onclick="buy('turret')">
@@ -250,7 +271,8 @@
     <script src="physics-collision.js"></script>
     <script src="physics-ai.js"></script>
     <script src="physics.js"></script>
-    <script src="actions.js"></script>
+    <script src="actions-combat.js"></script>
+    <script src="actions-economy.js"></script>
     <script src="input.js"></script>
     <script src="script.js"></script>
 </body>
