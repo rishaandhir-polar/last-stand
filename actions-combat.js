@@ -4,7 +4,30 @@ GAME.shoot = function (state, timestamp) {
     let angle = player.angle;
     const BULLET_SPEED = GAME.BULLET_SPEED;
 
-    if (player.weapon === 'ar') {
+    if (player.weapon === 'railgun') {
+        if (timestamp < state.fireCooldown) return;
+        state.fireCooldown = timestamp + 100;
+        muzzleFlashes.push({ x: player.x + Math.cos(angle) * 45, y: player.y + Math.sin(angle) * 45, life: 12 });
+        bullets.push({ x: player.x, y: player.y, vx: Math.cos(angle) * (BULLET_SPEED * 3), vy: Math.sin(angle) * (BULLET_SPEED * 3), dmg: 250, type: 'sniper', color: '#00f3ff', life: 120 });
+        player.ammo--;
+    } else if (player.weapon === 'nuke') {
+        if (timestamp < state.fireCooldown) return;
+        state.fireCooldown = timestamp + 800;
+        muzzleFlashes.push({ x: player.x + Math.cos(angle) * 40, y: player.y + Math.sin(angle) * 40, life: 15 });
+        bullets.push({ x: player.x, y: player.y, vx: Math.cos(angle) * (BULLET_SPEED * 0.7), vy: Math.sin(angle) * (BULLET_SPEED * 0.7), dmg: 500, type: 'nuke', color: '#2ecc71', life: 200 });
+        player.ammo -= 10;
+    } else if (player.weapon === 'gatling') {
+        state.fireCooldown = timestamp + 40;
+        muzzleFlashes.push({ x: player.x + Math.cos(angle) * 35, y: player.y + Math.sin(angle) * 35, life: 3 });
+        bullets.push({
+            x: player.x, y: player.y,
+            vx: Math.cos(angle + (Math.random() - 0.5) * 0.15) * (BULLET_SPEED * 1.5),
+            vy: Math.sin(angle + (Math.random() - 0.5) * 0.15) * (BULLET_SPEED * 1.5),
+            dmg: 35,
+            color: '#f1c40f'
+        });
+        player.ammo--;
+    } else if (player.weapon === 'ar') {
         state.fireCooldown = timestamp + 100;
         muzzleFlashes.push({ x: player.x + Math.cos(angle) * 30, y: player.y + Math.sin(angle) * 30, life: 3 });
         bullets.push({ x: player.x, y: player.y, vx: Math.cos(angle + (Math.random() - 0.5) * 0.1) * BULLET_SPEED, vy: Math.sin(angle + (Math.random() - 0.5) * 0.1) * BULLET_SPEED, dmg: 20, color: '#f39c12' });

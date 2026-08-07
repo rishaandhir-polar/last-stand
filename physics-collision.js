@@ -9,7 +9,10 @@ GAME.updateBullets = function (state, scale) {
             let z = zombies[j];
             if (!z) continue;
             if (Math.hypot(b.x - z.x, b.y - z.y) < z.radius) {
-                if (z.isShielded) {
+                if (b.type === 'nuke') {
+                    GAME.explodeGeneric(state, b.x, b.y, 999, 350, false);
+                    bullets.splice(i, 1); break;
+                } else if (z.isShielded) {
                     GAME.spawnShieldSpark(state, z.x, z.y, 4);
                     GAME.soundManager.playSynth(300 + Math.random() * 100, 0.05, 'triangle');
                 } else {

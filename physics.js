@@ -3,6 +3,12 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     const { player, zombies, items, canvas } = state;
     const scale = dt / 16.67;
 
+    if (player && player.isAdmin) {
+        player.hp = player.maxHp;
+        player.ammo = 9999;
+        player.money = 999999;
+    }
+
     const isMenuOpen = !document.getElementById('shop-menu').classList.contains('hidden') ||
         !document.getElementById('settings-menu').classList.contains('hidden') ||
         !document.getElementById('turret-menu').classList.contains('hidden') ||
@@ -10,7 +16,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
         !document.getElementById('field-manual').classList.contains('hidden');
 
     // Auto-fire logic
-    if (!isMenuOpen && !state.buildMode && state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower')) {
+    if (!isMenuOpen && !state.buildMode && state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower' || player.weapon === 'gatling' || player.weapon === 'railgun')) {
         if (timestamp > state.fireCooldown) window.dispatchEvent(new CustomEvent('player-shoot', { detail: { timestamp } }));
     }
 

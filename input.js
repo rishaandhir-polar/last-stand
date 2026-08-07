@@ -10,6 +10,31 @@ GAME.setupInput = function (state) {
         if (e.key === '3' && state.player.unlockedWeapons.includes('ar')) { state.player.weapon = 'ar'; GAME.updateHUD(state); }
         if (e.key === '4' && state.player.unlockedWeapons.includes('sniper')) { state.player.weapon = 'sniper'; GAME.updateHUD(state); }
         if (e.key === '5' && state.player.unlockedWeapons.includes('flamethrower')) { state.player.weapon = 'flamethrower'; GAME.updateHUD(state); }
+        if (e.key === '6' && state.player.unlockedWeapons.includes('railgun')) { state.player.weapon = 'railgun'; GAME.updateHUD(state); }
+        if (e.key === '7' && state.player.unlockedWeapons.includes('nuke')) { state.player.weapon = 'nuke'; GAME.updateHUD(state); }
+        if (e.key === '8' && state.player.unlockedWeapons.includes('gatling')) { state.player.weapon = 'gatling'; GAME.updateHUD(state); }
+
+        if (!state.cheatBuffer) state.cheatBuffer = "";
+        if (e.key.length === 1) {
+            state.cheatBuffer += e.key.toLowerCase();
+            if (state.cheatBuffer.length > 10) state.cheatBuffer = state.cheatBuffer.substring(state.cheatBuffer.length - 10);
+            if (state.cheatBuffer.endsWith("admin")) {
+                state.player.isAdmin = true;
+                state.player.money = 999999;
+                state.player.hp = state.player.maxHp;
+                state.player.ammo = 9999;
+                const cheatWeapons = ['shotgun', 'ar', 'sniper', 'flamethrower', 'railgun', 'nuke', 'gatling'];
+                cheatWeapons.forEach(w => {
+                    if (!state.player.unlockedWeapons.includes(w)) {
+                        state.player.unlockedWeapons.push(w);
+                    }
+                });
+                state.player.weapon = 'railgun';
+                GAME.soundManager.explode();
+                GAME.showNotification("CHEAT ENABLED", "ADMIN WEAPONS UNLOCKED! Keys 6, 7, 8");
+                GAME.updateHUD(state);
+            }
+        }
         if (e.key === 'x' || e.key === 'X') {
             if (state.controlMode === 'keyboard' && !state.buildMode) {
                 state.isFiring = true;

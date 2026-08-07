@@ -77,10 +77,19 @@ class SoundManager {
     }
 
     shoot(weapon) {
-        const weaponMap = { 'ar': 'rifle', 'shotgun': 'shotgun', 'pistol': 'pistol', 'sniper': 'sniper', 'flamethrower': 'flamethrower' };
+        const weaponMap = { 
+            'ar': 'rifle', 
+            'shotgun': 'shotgun', 
+            'pistol': 'pistol', 
+            'sniper': 'sniper', 
+            'flamethrower': 'flamethrower',
+            'railgun': 'laser',
+            'nuke': 'explosion',
+            'gatling': 'rifle'
+        };
         const soundName = weaponMap[weapon] || 'pistol';
-        const volumes = { 'rifle': 0.1, 'shotgun': 0.3, 'pistol': 0.2, 'sniper': 0.4, 'flamethrower': 0.1 };
-        this.play(soundName, volumes[soundName]);
+        const volumes = { 'rifle': 0.1, 'shotgun': 0.3, 'pistol': 0.2, 'sniper': 0.4, 'flamethrower': 0.1, 'laser': 0.3, 'explosion': 0.4 };
+        this.play(soundName, volumes[soundName] || 0.2);
     }
 
     explode() {
