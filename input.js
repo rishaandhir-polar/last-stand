@@ -3,7 +3,7 @@ GAME.setupInput = function (state) {
         if (e.repeat) return;
         state.keys[e.key] = true;
         if (e.key === 'r' || e.key === 'R') {
-            state.buildRotation = ((state.buildRotation || 0) + Math.PI / 2);
+            state.buildRotation = ((state.buildRotation || 0) + Math.PI / 4);
         }
         if (e.key === '1') { state.player.weapon = 'pistol'; GAME.updateHUD(state); }
         if (e.key === '2' && state.player.unlockedWeapons.includes('shotgun')) { state.player.weapon = 'shotgun'; GAME.updateHUD(state); }
@@ -73,6 +73,13 @@ GAME.setupInput = function (state) {
 
     window.addEventListener('mouseup', e => { if (e.button === 0) state.isFiring = false; });
     window.addEventListener('contextmenu', e => e.preventDefault());
+    window.addEventListener('wheel', e => {
+        if (state.buildMode) {
+            e.preventDefault();
+            const dir = e.deltaY > 0 ? 1 : -1;
+            state.buildRotation = (state.buildRotation || 0) + dir * (Math.PI / 36);
+        }
+    }, { passive: false });
 
     if ('ontouchstart' in window) {
         state.isMobile = true;

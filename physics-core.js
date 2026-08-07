@@ -22,13 +22,17 @@ GAME.explodeGeneric = function (state, x, y, maxDmg, maxRadius, hurtPlayer) {
         if (!t) continue;
         let d = Math.hypot(t.x - x, t.y - y);
         if (d < maxRadius) {
-            let dmg = ((maxRadius - d) / maxRadius) * maxDmg;
-            t.hp -= dmg;
-            if (t.hp <= 0) {
-                state.player.money += t.reward;
-                GAME.bloodExplosion(state, t.x, t.y);
-                GAME.checkBossDrop(state, t);
-                state.zombies.splice(i, 1);
+            if (t.isShielded) {
+                GAME.spawnShieldSpark(state, t.x, t.y, 3);
+            } else {
+                let dmg = ((maxRadius - d) / maxRadius) * maxDmg;
+                t.hp -= dmg;
+                if (t.hp <= 0) {
+                    state.player.money += t.reward;
+                    GAME.bloodExplosion(state, t.x, t.y);
+                    GAME.checkBossDrop(state, t);
+                    state.zombies.splice(i, 1);
+                }
             }
         }
     }
@@ -57,6 +61,18 @@ GAME.spawnBlood = function (state, x, y, count) {
             vy: (Math.random() - 0.5) * 5,
             life: 20 + Math.random() * 20,
             color: '#c0392b'
+        });
+    }
+};
+
+GAME.spawnShieldSpark = function (state, x, y, count) {
+    for (let i = 0; i < count; i++) {
+        state.particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
+            life: 15 + Math.random() * 15,
+            color: '#3498db'
         });
     }
 };

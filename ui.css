@@ -43,7 +43,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
     background: rgba(20, 20, 20, 0.95);
     border: 4px solid #444;
     padding: 30px;
@@ -59,6 +59,22 @@
     max-height: 85vh;
     overflow-y: auto;
     z-index: 100;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.22s ease-out, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.22s;
+}
+
+#shop-menu.hidden,
+#game-over.hidden,
+#settings-menu.hidden,
+#turret-menu.hidden,
+#drone-menu.hidden,
+#field-manual.hidden {
+    display: flex !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -50%) scale(0.92);
+    pointer-events: none;
 }
 
 .manual-content {
@@ -197,7 +213,7 @@ button:hover {
 .z-icon.shotgun { background: #2ecc71; }
 .z-icon.flame { background: #2ecc71; }
 .z-icon.exploder { background: #d35400; }
-.z-icon.spawner { background: #f1c40f; }
+.z-icon.shield_charger { background: #3498db; }
 .z-icon.boss { background: #2c3e50; width: 36px; height: 36px; }
 .z-icon.boss::after { width: 18px; height: 8px; display: block; left: 75%; }
 

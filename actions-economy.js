@@ -8,7 +8,7 @@ GAME.buy = function (state, type) {
     else if (type === 'shotgun') { cost = 200; name = "Shotgun"; }
     else if (type === 'ar') { cost = 400; name = "AR Rifle"; }
     else if (type === 'sniper') { cost = 600; name = "Sniper Rifle"; }
-    else if (type === 'flamethrower') { cost = 800; name = "Flamethrower"; }
+    else if (type === 'flamethrower') { cost = 300; name = "Flamethrower"; }
     else if (type === 'turret') { cost = 350; name = "Turret"; }
     else if (type === 'wall_wood') { cost = 50; name = "Wood Wall"; }
     else if (type === 'wall_stone') { cost = 150; name = "Stone Wall"; }
@@ -87,6 +87,12 @@ GAME.forfeit = function (state) {
 
 GAME.placeBuild = function (state) {
     const { player, mouseX, mouseY, buildRotation } = state;
+    
+    if (!GAME.isPlacementValid(state)) {
+        GAME.soundManager.playSynth(180, 0.2, 'sawtooth');
+        return;
+    }
+
     let cost = 0;
     if (state.buildMode === 'turret') cost = 350;
     else if (state.buildMode === 'landmine') cost = 80;

@@ -68,6 +68,7 @@
 
         GAME.draw(state);
         GAME.drawLighting(state);
+        GAME.drawLowHealthVignette(state);
         GAME.drawStaminaUI(state);
 
         requestAnimationFrame(update);

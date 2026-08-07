@@ -6,7 +6,7 @@ GAME.spawnZombie = function (state) {
     if (wave > 5) pool.push({ type: 'tank', weight: 10 });
     if (wave > 2) pool.push({ type: 'shooter', weight: 15 });
     if (wave > 3) pool.push({ type: 'exploder', weight: 15 });
-    if (wave > 4) pool.push({ type: 'spawner', weight: 10 });
+    if (wave > 4) pool.push({ type: 'shield_charger', weight: 10 });
     if (wave > 4) pool.push({ type: 'shotgunner', weight: 15 });
     if (wave > 6) pool.push({ type: 'ar_gunner', weight: 10 });
     if (wave > 8) pool.push({ type: 'flamethrower', weight: 10 });
@@ -26,7 +26,7 @@ GAME.spawnZombie = function (state) {
     if (type === 'tank') { z.speed *= 0.5; z.hp *= 3; z.radius = 30; z.color = '#34495e'; z.reward = 50; }
     if (type === 'shooter') { z.speed *= 0.8; z.hp *= 0.8; z.color = '#8e44ad'; z.reward = 20; }
     if (type === 'exploder') { z.speed *= 1.2; z.hp *= 0.8; z.color = '#d35400'; z.reward = 30; }
-    if (type === 'spawner') { z.speed *= 0.5; z.hp *= 2.0; z.color = '#f1c40f'; z.reward = 60; }
+    if (type === 'shield_charger') { z.speed *= 0.6; z.hp *= 1.5; z.radius = 22; z.color = '#3498db'; z.reward = 60; }
     z.maxHp = z.hp;
     state.zombies.push(z);
 };
@@ -38,7 +38,7 @@ GAME.spawnBoss = function (state) {
     else if (side === 1) { x = canvas.width + 100; y = Math.random() * canvas.height; }
     else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + 100; }
     else { x = -100; y = Math.random() * canvas.height; }
-    state.zombies.push({ x, y, hp: 2000 + (wave * 200), maxHp: 2000 + (wave * 200), radius: 60, speed: 1.5, color: '#2c3e50', reward: 1000, type: 'boss' });
+    state.zombies.push({ x, y, hp: 2000 + (wave * 200), maxHp: 2000 + (wave * 200), radius: 60, speed: 1.5, baseSpeed: 1.5, color: '#2c3e50', reward: 1000, type: 'boss' });
 };
 
 GAME.spawnMini = function (state, x, y) {

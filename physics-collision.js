@@ -9,8 +9,13 @@ GAME.updateBullets = function (state, scale) {
             let z = zombies[j];
             if (!z) continue;
             if (Math.hypot(b.x - z.x, b.y - z.y) < z.radius) {
-                z.hp -= b.dmg; GAME.spawnBlood(state, z.x, z.y, 5);
-                if (z.hp <= 0) { zombies.splice(j, 1); player.money += z.reward; GAME.checkBossDrop(state, z); GAME.updateHUD(state); }
+                if (z.isShielded) {
+                    GAME.spawnShieldSpark(state, z.x, z.y, 4);
+                    GAME.soundManager.playSynth(300 + Math.random() * 100, 0.05, 'triangle');
+                } else {
+                    z.hp -= b.dmg; GAME.spawnBlood(state, z.x, z.y, 5);
+                    if (z.hp <= 0) { zombies.splice(j, 1); player.money += z.reward; GAME.checkBossDrop(state, z); GAME.updateHUD(state); }
+                }
                 if (b.type !== 'sniper') { bullets.splice(i, 1); break; }
             }
         }
@@ -25,10 +30,21 @@ GAME.updateEnemyBullets = function (state, scale) {
         let hit = false;
         for (let j = walls.length - 1; j >= 0; j--) {
             let w = walls[j];
-            let halfW = Math.abs((w.rotation || 0) - Math.PI / 2) < 0.1 ? 10 : 40;
-            let halfH = Math.abs((w.rotation || 0) - Math.PI / 2) < 0.1 ? 40 : 10;
-            if (b.x > w.x - halfW - 5 && b.x < w.x + halfW + 5 && b.y > w.y - halfH - 5 && b.y < w.y + halfH + 5) {
-                w.hp -= b.dmg; if (w.hp <= 0) walls.splice(j, 1); enemyBullets.splice(i, 1); hit = true; break;
+            const rot = w.rotation || 0;
+            const cos = Math.cos(rot);
+            const sin = Math.sin(rot);
+            const dx = b.x - w.x;
+            const dy = b.y - w.y;
+            const lx = dx * cos + dy * sin;
+            const ly = -dx * sin + dy * cos;
+            const tx = Math.max(-40, Math.min(lx, 40));
+            const ty = Math.max(-10, Math.min(ly, 10));
+            if (Math.hypot(lx - tx, ly - ty) < 5) {
+                w.hp -= b.dmg; 
+                if (w.hp <= 0) walls.splice(j, 1); 
+                enemyBullets.splice(i, 1); 
+                hit = true; 
+                break;
             }
         }
         if (hit) continue;
