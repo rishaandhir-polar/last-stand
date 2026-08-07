@@ -40,6 +40,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     GAME.updateDrones(state, timestamp, scale);
     GAME.updateGrenades(state, timestamp, scale);
     GAME.updateTraps(state, scale);
+    GAME.updateBlackHoles(state, scale);
     GAME.updateSystemItems(state, timestamp);
     GAME.updateFX(state, scale);
 };

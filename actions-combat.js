@@ -27,6 +27,26 @@ GAME.shoot = function (state, timestamp) {
             color: '#f1c40f'
         });
         player.ammo--;
+    } else if (player.weapon === 'blackhole') {
+        if (timestamp < state.fireCooldown) return;
+        state.fireCooldown = timestamp + 3500;
+        // Spawn a gravity-well orb that lingers and pulls enemies
+        bullets.push({
+            x: player.x, y: player.y,
+            vx: Math.cos(angle) * (BULLET_SPEED * 0.4),
+            vy: Math.sin(angle) * (BULLET_SPEED * 0.4),
+            dmg: 0, type: 'blackhole',
+            color: '#9b59b6',
+            life: 180,  // ~3s at 60fps
+            radius: 20
+        });
+        player.ammo -= 5;
+    } else if (player.weapon === 'lightning') {
+        if (timestamp < state.fireCooldown) return;
+        state.fireCooldown = timestamp + 600;
+        GAME.doChainLightning(state, player.x, player.y, 150, 5);
+        muzzleFlashes.push({ x: player.x + Math.cos(angle) * 30, y: player.y + Math.sin(angle) * 30, life: 8 });
+        player.ammo -= 2;
     } else if (player.weapon === 'ar') {
         state.fireCooldown = timestamp + 100;
         muzzleFlashes.push({ x: player.x + Math.cos(angle) * 30, y: player.y + Math.sin(angle) * 30, life: 3 });
