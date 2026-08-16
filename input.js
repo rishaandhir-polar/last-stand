@@ -25,6 +25,7 @@ GAME.setupInput = function (state) {
                 state.player.money = 999999;
                 state.player.hp = state.player.maxHp;
                 state.player.ammo = 9999;
+                state.adminMachines = true;
                 const cheatWeapons = ['shotgun', 'ar', 'sniper', 'flamethrower', 'railgun', 'nuke', 'gatling', 'swarm', 'cursorbomb'];
                 cheatWeapons.forEach(w => {
                     if (!state.player.unlockedWeapons.includes(w)) {

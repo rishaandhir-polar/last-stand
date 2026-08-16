@@ -54,6 +54,11 @@ GAME.updateItems = function (state, scale) {
 GAME.updateTurrets = function (state, timestamp, scale) {
     const { turrets, bullets } = state;
     turrets.forEach(t => {
+        if (state.adminMachines) {
+            t.ammo = t.maxAmmo;
+            t.type = 'shotgun';
+            t.damage = 1000;
+        }
         if (t.ammoRegen > 0) t.ammo = Math.min(t.maxAmmo, t.ammo + (t.ammoRegen / 60) * scale);
         if (t.ammo < 1) return;
         
@@ -66,13 +71,13 @@ GAME.updateTurrets = function (state, timestamp, scale) {
             if (d < minDist) { minDist = d; target = z; }
         });
         
-        if (target && timestamp - (t.lastShot || 0) > (t.type === 'shotgun' ? 1000 : 500)) {
+        if (target && timestamp - (t.lastShot || 0) > (state.adminMachines ? 100 : (t.type === 'shotgun' ? 1000 : 500))) {
             let angle = Math.atan2(target.y - t.y, target.x - t.x);
             if (t.type === 'shotgun') {
                 for (let k = -2; k <= 2; k++) {
-                    bullets.push({ x: t.x, y: t.y, vx: Math.cos(angle + k * 0.15) * 12, vy: Math.sin(angle + k * 0.15) * 12, dmg: t.damage, life: 30 });
+                    bullets.push({ x: t.x, y: t.y, vx: Math.cos(angle + k * 0.15) * 15, vy: Math.sin(angle + k * 0.15) * 15, dmg: t.damage, life: 40 });
                 }
-                t.ammo -= 2;
+                t.ammo -= (state.adminMachines ? 0 : 2);
             } else {
                 bullets.push({ x: t.x, y: t.y, vx: Math.cos(angle) * 15, vy: Math.sin(angle) * 15, dmg: t.damage });
                 t.ammo--;
@@ -128,6 +133,8 @@ GAME.updateDrones = function (state, timestamp, scale) {
         }
 
         // Combat Logic
+        if (state.adminMachines) d.damage = 1000;
+
         let target = null;
         let minDist = d.range;
         zombies.forEach(z => {
@@ -136,9 +143,15 @@ GAME.updateDrones = function (state, timestamp, scale) {
             if (dist < minDist) { minDist = dist; target = z; }
         });
 
-        if (target && timestamp - (d.lastShot || 0) > 600) {
+        if (target && timestamp - (d.lastShot || 0) > (state.adminMachines ? 100 : 600)) {
             let angle = Math.atan2(target.y - d.y, target.x - d.x);
-            bullets.push({ x: d.x, y: d.y, vx: Math.cos(angle) * 12, vy: Math.sin(angle) * 12, dmg: d.damage, color: '#f1c40f' });
+            if (state.adminMachines) {
+                for (let k = -2; k <= 2; k++) {
+                    bullets.push({ x: d.x, y: d.y, vx: Math.cos(angle + k * 0.15) * 15, vy: Math.sin(angle + k * 0.15) * 15, dmg: d.damage, color: '#f1c40f', life: 40 });
+                }
+            } else {
+                bullets.push({ x: d.x, y: d.y, vx: Math.cos(angle) * 12, vy: Math.sin(angle) * 12, dmg: d.damage, color: '#f1c40f' });
+            }
             d.lastShot = timestamp;
             GAME.soundManager.playFile('pistol', 0.1);
         }
