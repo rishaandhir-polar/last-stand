@@ -27,26 +27,45 @@ GAME.shoot = function (state, timestamp) {
             color: '#f1c40f'
         });
         player.ammo--;
-    } else if (player.weapon === 'blackhole') {
+    } else if (player.weapon === 'repulsor') {
         if (timestamp < state.fireCooldown) return;
-        state.fireCooldown = timestamp + 3500;
-        // Spawn a gravity-well orb that lingers and pulls enemies
-        bullets.push({
-            x: player.x, y: player.y,
-            vx: Math.cos(angle) * (BULLET_SPEED * 0.4),
-            vy: Math.sin(angle) * (BULLET_SPEED * 0.4),
-            dmg: 0, type: 'blackhole',
-            color: '#9b59b6',
-            life: 180,  // ~3s at 60fps
-            radius: 20
-        });
+        state.fireCooldown = timestamp + 2000;
+        // Blast all enemies outward with knockback and damage
+        const REPULSOR_RANGE = 320;
+        for (let j = state.zombies.length - 1; j >= 0; j--) {
+            const z = state.zombies[j];
+            if (!z) continue;
+            const dx = z.x - player.x, dy = z.y - player.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < REPULSOR_RANGE && dist > 0.1) {
+                const falloff = 1 - dist / REPULSOR_RANGE;
+                const force = falloff * 28;
+                z.kbVx = (dx / dist) * force;
+                z.kbVy = (dy / dist) * force;
+                z.hp -= falloff * 80;
+                if (z.hp <= 0) {
+                    player.money += z.reward;
+                    GAME.bloodExplosion(state, z.x, z.y);
+                    GAME.checkBossDrop(state, z);
+                    state.zombies.splice(j, 1);
+                }
+            }
+        }
+        // Big shockwave ring visual
+        state.muzzleFlashes.push({ x: player.x, y: player.y, life: 14, radius: REPULSOR_RANGE });
+        state.screenShake = Math.max(state.screenShake, 12);
+        GAME.soundManager.explode();
+        GAME.updateHUD(state);
         player.ammo -= 5;
-    } else if (player.weapon === 'lightning') {
+        return; // skip sound at bottom
+    } else if (player.weapon === 'cursorbomb') {
         if (timestamp < state.fireCooldown) return;
-        state.fireCooldown = timestamp + 600;
-        GAME.doChainLightning(state, player.x, player.y, 150, 5);
-        muzzleFlashes.push({ x: player.x + Math.cos(angle) * 30, y: player.y + Math.sin(angle) * 30, life: 8 });
-        player.ammo -= 2;
+        state.fireCooldown = timestamp + 3000;
+        state.pendingBomb = { x: state.mouseX, y: state.mouseY, timer: 30 };
+        GAME.soundManager.playSynth(220, 0.15, 'sine');
+        player.ammo -= 5;
+        GAME.updateHUD(state);
+        return;
     } else if (player.weapon === 'ar') {
         state.fireCooldown = timestamp + 100;
         muzzleFlashes.push({ x: player.x + Math.cos(angle) * 30, y: player.y + Math.sin(angle) * 30, life: 3 });

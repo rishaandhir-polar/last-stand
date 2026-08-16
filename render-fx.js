@@ -48,6 +48,24 @@ GAME.drawTopFX = function (ctx, state) {
         }
         ctx.restore();
     });
+
+    if (state.pendingBomb) {
+        ctx.strokeStyle = `rgba(255, 0, 0, ${(state.pendingBomb.timer % 10) / 10})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(state.pendingBomb.x, state.pendingBomb.y, 300 * (state.pendingBomb.timer / 30), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(state.pendingBomb.x - 20, state.pendingBomb.y);
+        ctx.lineTo(state.pendingBomb.x + 20, state.pendingBomb.y);
+        ctx.moveTo(state.pendingBomb.x, state.pendingBomb.y - 20);
+        ctx.lineTo(state.pendingBomb.x, state.pendingBomb.y + 20);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
 };
 
 GAME.drawGroundTraps = function (ctx, state) {

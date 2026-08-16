@@ -94,6 +94,18 @@ GAME.updateZombies = function (state, timestamp, scale) {
         z.x += moveX;
         z.y += moveY;
 
+        // Apply knockback
+        if (z.kbVx) {
+            z.x += z.kbVx * scale;
+            z.kbVx *= 0.85;
+            if (Math.abs(z.kbVx) < 0.1) z.kbVx = 0;
+        }
+        if (z.kbVy) {
+            z.y += z.kbVy * scale;
+            z.kbVy *= 0.85;
+            if (Math.abs(z.kbVy) < 0.1) z.kbVy = 0;
+        }
+
         // Wall collisions
         walls.forEach(w => {
             const rot = w.rotation || 0;

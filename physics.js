@@ -40,8 +40,17 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     GAME.updateDrones(state, timestamp, scale);
     GAME.updateGrenades(state, timestamp, scale);
     GAME.updateTraps(state, scale);
-    GAME.updateBlackHoles(state, scale);
     GAME.updateSystemItems(state, timestamp);
+
+    // Cursor Bomb countdown
+    if (state.pendingBomb) {
+        state.pendingBomb.timer -= scale;
+        if (state.pendingBomb.timer <= 0) {
+            GAME.explodeGeneric(state, state.pendingBomb.x, state.pendingBomb.y, 999, 300, false);
+            state.screenShake = Math.max(state.screenShake, 20);
+            state.pendingBomb = null;
+        }
+    }
     GAME.updateFX(state, scale);
 };
 
