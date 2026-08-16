@@ -16,7 +16,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
         !document.getElementById('field-manual').classList.contains('hidden');
 
     // Auto-fire logic
-    if (!isMenuOpen && !state.buildMode && state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower' || player.weapon === 'gatling' || player.weapon === 'railgun')) {
+    if (!isMenuOpen && !state.buildMode && state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower' || player.weapon === 'gatling' || player.weapon === 'railgun' || player.weapon === 'cursorbomb')) {
         if (timestamp > state.fireCooldown) window.dispatchEvent(new CustomEvent('player-shoot', { detail: { timestamp } }));
     }
 
@@ -43,12 +43,15 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     GAME.updateSystemItems(state, timestamp);
 
     // Cursor Bomb countdown
-    if (state.pendingBomb) {
-        state.pendingBomb.timer -= scale;
-        if (state.pendingBomb.timer <= 0) {
-            GAME.explodeGeneric(state, state.pendingBomb.x, state.pendingBomb.y, 999, 300, false);
-            state.screenShake = Math.max(state.screenShake, 20);
-            state.pendingBomb = null;
+    if (state.pendingBombs) {
+        for (let i = state.pendingBombs.length - 1; i >= 0; i--) {
+            let bomb = state.pendingBombs[i];
+            bomb.timer -= scale;
+            if (bomb.timer <= 0) {
+                GAME.explodeGeneric(state, bomb.x, bomb.y, 9999, 800, false);
+                state.screenShake = Math.max(state.screenShake, 30);
+                state.pendingBombs.splice(i, 1);
+            }
         }
     }
     GAME.updateFX(state, scale);

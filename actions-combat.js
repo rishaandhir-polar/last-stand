@@ -27,43 +27,35 @@ GAME.shoot = function (state, timestamp) {
             color: '#f1c40f'
         });
         player.ammo--;
-    } else if (player.weapon === 'repulsor') {
+    } else if (player.weapon === 'screennuke') {
         if (timestamp < state.fireCooldown) return;
-        state.fireCooldown = timestamp + 2000;
-        // Blast all enemies outward with knockback and damage
-        const REPULSOR_RANGE = 320;
+        state.fireCooldown = timestamp + 1000;
+        // Instantly kill everything visible
         for (let j = state.zombies.length - 1; j >= 0; j--) {
             const z = state.zombies[j];
             if (!z) continue;
-            const dx = z.x - player.x, dy = z.y - player.y;
-            const dist = Math.hypot(dx, dy);
-            if (dist < REPULSOR_RANGE && dist > 0.1) {
-                const falloff = 1 - dist / REPULSOR_RANGE;
-                const force = falloff * 28;
-                z.kbVx = (dx / dist) * force;
-                z.kbVy = (dy / dist) * force;
-                z.hp -= falloff * 80;
-                if (z.hp <= 0) {
-                    player.money += z.reward;
-                    GAME.bloodExplosion(state, z.x, z.y);
-                    GAME.checkBossDrop(state, z);
-                    state.zombies.splice(j, 1);
-                }
+            z.hp -= 9999;
+            if (z.hp <= 0) {
+                player.money += z.reward;
+                GAME.bloodExplosion(state, z.x, z.y);
+                GAME.checkBossDrop(state, z);
+                state.zombies.splice(j, 1);
             }
         }
         // Big shockwave ring visual
-        state.muzzleFlashes.push({ x: player.x, y: player.y, life: 14, radius: REPULSOR_RANGE });
-        state.screenShake = Math.max(state.screenShake, 12);
+        state.muzzleFlashes.push({ x: player.x, y: player.y, life: 20, radius: 1500 });
+        state.screenShake = Math.max(state.screenShake, 40);
         GAME.soundManager.explode();
         GAME.updateHUD(state);
         player.ammo -= 5;
         return; // skip sound at bottom
     } else if (player.weapon === 'cursorbomb') {
         if (timestamp < state.fireCooldown) return;
-        state.fireCooldown = timestamp + 3000;
-        state.pendingBomb = { x: state.mouseX, y: state.mouseY, timer: 30 };
+        state.fireCooldown = timestamp + 80; // spammable!
+        if (!state.pendingBombs) state.pendingBombs = [];
+        state.pendingBombs.push({ x: state.mouseX, y: state.mouseY, timer: 30 });
         GAME.soundManager.playSynth(220, 0.15, 'sine');
-        player.ammo -= 5;
+        player.ammo -= 1;
         GAME.updateHUD(state);
         return;
     } else if (player.weapon === 'ar') {

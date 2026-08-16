@@ -13,7 +13,7 @@ GAME.setupInput = function (state) {
         if (e.key === '6' && state.player.unlockedWeapons.includes('railgun')) { state.player.weapon = 'railgun'; GAME.updateHUD(state); }
         if (e.key === '7' && state.player.unlockedWeapons.includes('nuke')) { state.player.weapon = 'nuke'; GAME.updateHUD(state); }
         if (e.key === '8' && state.player.unlockedWeapons.includes('gatling')) { state.player.weapon = 'gatling'; GAME.updateHUD(state); }
-        if (e.key === '9' && state.player.unlockedWeapons.includes('repulsor')) { state.player.weapon = 'repulsor'; GAME.updateHUD(state); }
+        if (e.key === '9' && state.player.unlockedWeapons.includes('screennuke')) { state.player.weapon = 'screennuke'; GAME.updateHUD(state); }
         if (e.key === '0' && state.player.unlockedWeapons.includes('cursorbomb')) { state.player.weapon = 'cursorbomb'; GAME.updateHUD(state); }
 
         if (!state.cheatBuffer) state.cheatBuffer = "";
@@ -25,7 +25,7 @@ GAME.setupInput = function (state) {
                 state.player.money = 999999;
                 state.player.hp = state.player.maxHp;
                 state.player.ammo = 9999;
-                const cheatWeapons = ['shotgun', 'ar', 'sniper', 'flamethrower', 'railgun', 'nuke', 'gatling', 'repulsor', 'cursorbomb'];
+                const cheatWeapons = ['shotgun', 'ar', 'sniper', 'flamethrower', 'railgun', 'nuke', 'gatling', 'screennuke', 'cursorbomb'];
                 cheatWeapons.forEach(w => {
                     if (!state.player.unlockedWeapons.includes(w)) {
                         state.player.unlockedWeapons.push(w);
@@ -33,7 +33,7 @@ GAME.setupInput = function (state) {
                 });
                 state.player.weapon = 'railgun';
                 GAME.soundManager.explode();
-                GAME.showNotification("CHEAT ENABLED", "ADMIN WEAPONS! Keys 6-Railgun 7-Nuke 8-Gatling 9-Repulsor 0-CursorBomb");
+                GAME.showNotification("CHEAT ENABLED", "ADMIN WEAPONS! Keys 6-Railgun 7-Nuke 8-Gatling 9-ScreenNuke 0-CursorBomb");
                 GAME.updateHUD(state);
             }
         }
