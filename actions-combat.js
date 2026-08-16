@@ -29,7 +29,7 @@ GAME.shoot = function (state, timestamp) {
         player.ammo--;
     } else if (player.weapon === 'swarm') {
         if (timestamp < state.fireCooldown) return;
-        state.fireCooldown = timestamp + 1000;
+        state.fireCooldown = timestamp + 150; // Spammable!
         // Fire a swarm of homing missiles
         for(let i = 0; i < 16; i++) {
             const spread = angle + (Math.random() - 0.5) * Math.PI * 1.5;
@@ -47,7 +47,7 @@ GAME.shoot = function (state, timestamp) {
         state.screenShake = Math.max(state.screenShake, 5);
         GAME.soundManager.playSynth(200, 0.1, 'sawtooth');
         GAME.updateHUD(state);
-        player.ammo -= 5;
+        player.ammo -= 2;
         return; // skip sound at bottom
     } else if (player.weapon === 'cursorbomb') {
         if (timestamp < state.fireCooldown) return;

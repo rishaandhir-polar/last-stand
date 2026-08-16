@@ -19,7 +19,13 @@ GAME.updateBullets = function (state, scale) {
             }
             if (Math.random() < 0.6) state.particles.push({x: b.x, y: b.y, vx: 0, vy: 0, life: 10, color: '#e67e22'});
         }
-        if (b.life) { b.life -= scale; if (b.life <= 0) { bullets.splice(i, 1); continue; } }
+        if (b.life) { 
+            b.life -= scale; 
+            if (b.life <= 0) { 
+                if (b.type === 'swarm') GAME.explodeGeneric(state, b.x, b.y, b.dmg, 80, false);
+                bullets.splice(i, 1); continue; 
+            } 
+        }
         b.x += b.vx * scale; b.y += b.vy * scale;
         if (b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) { bullets.splice(i, 1); continue; }
         for (let j = zombies.length - 1; j >= 0; j--) {
@@ -28,6 +34,9 @@ GAME.updateBullets = function (state, scale) {
             if (Math.hypot(b.x - z.x, b.y - z.y) < z.radius) {
                 if (b.type === 'nuke') {
                     GAME.explodeGeneric(state, b.x, b.y, 999, 350, false);
+                    bullets.splice(i, 1); break;
+                } else if (b.type === 'swarm') {
+                    GAME.explodeGeneric(state, b.x, b.y, b.dmg, 80, false);
                     bullets.splice(i, 1); break;
                 } else if (z.isShielded) {
                     GAME.spawnShieldSpark(state, z.x, z.y, 4);
