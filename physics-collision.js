@@ -2,6 +2,23 @@ GAME.updateBullets = function (state, scale) {
     const { bullets, zombies, canvas, player } = state;
     for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
+        if (b.type === 'swarm') {
+            let nearest = null, minDist = 400;
+            for(let j=0; j<zombies.length; j++) {
+                if(!zombies[j] || zombies[j].isShielded) continue;
+                let d = Math.hypot(zombies[j].x - b.x, zombies[j].y - b.y);
+                if (d < minDist) { minDist = d; nearest = zombies[j]; }
+            }
+            if (nearest) {
+                let tx = nearest.x - b.x, ty = nearest.y - b.y;
+                let tLen = Math.hypot(tx, ty);
+                b.vx += (tx/tLen) * 1.5 * scale;
+                b.vy += (ty/tLen) * 1.5 * scale;
+                let speed = Math.hypot(b.vx, b.vy);
+                if (speed > 12) { b.vx = (b.vx/speed)*12; b.vy = (b.vy/speed)*12; }
+            }
+            if (Math.random() < 0.6) state.particles.push({x: b.x, y: b.y, vx: 0, vy: 0, life: 10, color: '#e67e22'});
+        }
         if (b.life) { b.life -= scale; if (b.life <= 0) { bullets.splice(i, 1); continue; } }
         b.x += b.vx * scale; b.y += b.vy * scale;
         if (b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) { bullets.splice(i, 1); continue; }

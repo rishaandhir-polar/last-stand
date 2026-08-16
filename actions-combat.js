@@ -27,25 +27,25 @@ GAME.shoot = function (state, timestamp) {
             color: '#f1c40f'
         });
         player.ammo--;
-    } else if (player.weapon === 'screennuke') {
+    } else if (player.weapon === 'swarm') {
         if (timestamp < state.fireCooldown) return;
         state.fireCooldown = timestamp + 1000;
-        // Instantly kill everything visible
-        for (let j = state.zombies.length - 1; j >= 0; j--) {
-            const z = state.zombies[j];
-            if (!z) continue;
-            z.hp -= 9999;
-            if (z.hp <= 0) {
-                player.money += z.reward;
-                GAME.bloodExplosion(state, z.x, z.y);
-                GAME.checkBossDrop(state, z);
-                state.zombies.splice(j, 1);
-            }
+        // Fire a swarm of homing missiles
+        for(let i = 0; i < 16; i++) {
+            const spread = angle + (Math.random() - 0.5) * Math.PI * 1.5;
+            bullets.push({
+                x: player.x, y: player.y,
+                vx: Math.cos(spread) * (BULLET_SPEED * 0.8),
+                vy: Math.sin(spread) * (BULLET_SPEED * 0.8),
+                dmg: 45,
+                type: 'swarm',
+                life: 180,
+                color: '#e74c3c'
+            });
         }
-        // Big shockwave ring visual
-        state.muzzleFlashes.push({ x: player.x, y: player.y, life: 20, radius: 1500 });
-        state.screenShake = Math.max(state.screenShake, 40);
-        GAME.soundManager.explode();
+        state.muzzleFlashes.push({ x: player.x + Math.cos(angle)*30, y: player.y + Math.sin(angle)*30, life: 15 });
+        state.screenShake = Math.max(state.screenShake, 5);
+        GAME.soundManager.playSynth(200, 0.1, 'sawtooth');
         GAME.updateHUD(state);
         player.ammo -= 5;
         return; // skip sound at bottom

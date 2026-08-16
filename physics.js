@@ -16,7 +16,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
         !document.getElementById('field-manual').classList.contains('hidden');
 
     // Auto-fire logic
-    if (!isMenuOpen && !state.buildMode && state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower' || player.weapon === 'gatling' || player.weapon === 'railgun' || player.weapon === 'cursorbomb')) {
+    if (!isMenuOpen && !state.buildMode && state.isFiring && (player.weapon === 'ar' || player.weapon === 'flamethrower' || player.weapon === 'gatling' || player.weapon === 'railgun' || player.weapon === 'cursorbomb' || player.weapon === 'swarm')) {
         if (timestamp > state.fireCooldown) window.dispatchEvent(new CustomEvent('player-shoot', { detail: { timestamp } }));
     }
 
