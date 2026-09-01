@@ -7,7 +7,7 @@ GAME.draw = function (state) {
         ctx.translate((Math.random() - 0.5) * state.screenShake, (Math.random() - 0.5) * state.screenShake);
     }
 
-    GAME.drawMap(ctx, canvas, walls);
+    GAME.drawMap(ctx, canvas, walls, state.wave);
     GAME.drawGroundTraps(ctx, state);
     GAME.drawEntities(ctx, state);
     GAME.drawTopFX(ctx, state);

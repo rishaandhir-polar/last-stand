@@ -73,7 +73,7 @@ GAME.handlePlayerMovement = function (state, timestamp, scale, isMenuOpen) {
     if (player.isDashing && timestamp - player.lastDashTime > 200) player.isDashing = false;
     if (!player.isDashing && player.stamina < player.maxStamina) player.stamina += 0.5 * scale;
 
-    let speed = player.isDashing ? PLAYER_SPEED * 3 : PLAYER_SPEED;
+    let speed = (player.isDashing ? PLAYER_SPEED * 3 : PLAYER_SPEED) * (player.metaSpeed || 1);
     if (dx !== 0 || dy !== 0) {
         let len = Math.hypot(dx, dy);
         let moveX = (dx / len) * speed * scale;

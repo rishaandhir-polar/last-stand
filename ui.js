@@ -44,6 +44,11 @@ GAME.doGameOver = function (state) {
     if (finalWave) finalWave.innerText = state.wave;
     state.gameOver = true;
     if (state.lastWaveMoney !== undefined) state.player.money = state.lastWaveMoney;
+
+    // Award XP for this run
+    const earned = GAME.awardRunXP(state.wave);
+    const xpEarnedEl = document.getElementById('xp-earned');
+    if (xpEarnedEl) xpEarnedEl.innerText = '+' + earned + ' XP earned!';
 };
 
 GAME.toggleSettings = function () {

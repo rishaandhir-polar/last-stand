@@ -39,7 +39,8 @@
 #settings-menu,
 #turret-menu,
 #drone-menu,
-#field-manual {
+#field-manual,
+#xp-shop {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -69,7 +70,8 @@
 #settings-menu.hidden,
 #turret-menu.hidden,
 #drone-menu.hidden,
-#field-manual.hidden {
+#field-manual.hidden,
+#xp-shop.hidden {
     display: flex !important;
     opacity: 0;
     visibility: hidden;

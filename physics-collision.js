@@ -42,7 +42,11 @@ GAME.updateBullets = function (state, scale) {
                     GAME.spawnShieldSpark(state, z.x, z.y, 4);
                     GAME.soundManager.playSynth(300 + Math.random() * 100, 0.05, 'triangle');
                 } else {
-                    z.hp -= b.dmg; GAME.spawnBlood(state, z.x, z.y, 5);
+                    const isCrit = Math.random() < (player.critChance || 0.10);
+                    const dmg = isCrit ? b.dmg * 2 : b.dmg;
+                    z.hp -= dmg;
+                    GAME.spawnBlood(state, z.x, z.y, isCrit ? 10 : 5);
+                    if (isCrit) state.particles.push({ x: z.x, y: z.y - 20, vx: 0, vy: -1, life: 30, color: '#f1c40f' });
                     if (z.hp <= 0) { zombies.splice(j, 1); player.money += z.reward; GAME.checkBossDrop(state, z); GAME.updateHUD(state); }
                 }
                 if (b.type !== 'sniper') { bullets.splice(i, 1); break; }

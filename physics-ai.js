@@ -28,7 +28,30 @@ GAME.updateZombies = function (state, timestamp, scale) {
         let z = zombies[i];
         if (!z) continue;
         let angle = Math.atan2(player.y - z.y, player.x - z.x);
-        
+
+        // Smart wall-steering: sample nearby walls and deflect angle away from them
+        let steerX = 0, steerY = 0;
+        walls.forEach(w => {
+            const rot = w.rotation || 0;
+            const cos = Math.cos(rot), sin = Math.sin(rot);
+            const dx = z.x - w.x, dy = z.y - w.y;
+            const lx = dx * cos + dy * sin, ly = -dx * sin + dy * cos;
+            const tx = Math.max(-55, Math.min(lx, 55)), ty = Math.max(-20, Math.min(ly, 20));
+            const dist = Math.hypot(lx - tx, ly - ty);
+            if (dist < 70 && dist > 0.1) {
+                const pushStr = (70 - dist) / 70;
+                const locPushX = ((lx - tx) / dist) * pushStr;
+                const locPushY = ((ly - ty) / dist) * pushStr;
+                steerX += locPushX * cos - locPushY * sin;
+                steerY += locPushX * sin + locPushY * cos;
+            }
+        });
+        if (steerX !== 0 || steerY !== 0) {
+            const dirX = Math.cos(angle) + steerX * 2.0;
+            const dirY = Math.sin(angle) + steerY * 2.0;
+            angle = Math.atan2(dirY, dirX);
+        }
+
         let moveX = 0;
         let moveY = 0;
         let isDashingNow = false;

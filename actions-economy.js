@@ -48,7 +48,19 @@ GAME.nextWave = function (state) {
     GAME.closeShop();
     state.wave++;
     state.waveInProgress = true;
+    state.adminWeaponThisRound = null;
     GAME.soundManager.click();
+
+    // Roll for admin weapon drop from meta progression
+    GAME.rollAdminWeaponDrop(state);
+
+    // Notify on biome transitions
+    const biome = GAME.getBiome(state.wave);
+    const prevBiome = GAME.getBiome(state.wave - 1);
+    if (biome !== prevBiome && state.wave > 1) {
+        const names = { lab: 'LAB SECTOR', desert: 'DESERT WASTELAND', alien: 'ALIEN HIVE' };
+        GAME.showNotification('SECTOR SHIFT', 'Entering: ' + names[biome]);
+    }
 
     // Break the 5-wave pattern with dynamic boss spawning
     const bossChance = Math.min(0.5, (state.wave - 4) * 0.1);

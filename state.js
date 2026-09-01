@@ -1,3 +1,4 @@
+// Meta progression is applied in script.js after DOM loads via GAME.applyMeta
 GAME.state = {
     canvas: null,
     ctx: null,
@@ -5,7 +6,8 @@ GAME.state = {
         x: 400, y: 300, hp: 100, maxHp: 100, ammo: 100, money: 100,
         weapon: 'pistol', unlockedWeapons: ['pistol'], grenades: 3, maxGrenades: 5,
         stamina: 100, maxStamina: 100, isDashing: false, lastDashTime: 0,
-        angle: 0, radius: 20, carrying: null
+        angle: 0, radius: 20, carrying: null,
+        critChance: 0.10, metaSpeed: 1.0, adminDropChance: 0
     },
     zombies: [], bullets: [], enemyBullets: [], items: [], turrets: [], drones: [],
     walls: [], mines: [], spikes: [], thrownGrenades: [],

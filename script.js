@@ -11,6 +11,9 @@
 
         GAME.setupInput(state);
         GAME.soundManager.loadAllSounds();
+        if (GAME.applyMeta && GAME.loadMeta) {
+            GAME.applyMeta(state.player, GAME.loadMeta());
+        }
 
         GAME.openManual(state);
         GAME.updateHUD(state);
@@ -99,6 +102,8 @@
         GAME.state.controlMode = GAME.state.controlMode === 'mouse' ? 'keyboard' : 'mouse';
         GAME.updateControlDesc(GAME.state.controlMode);
     };
+    window.openXPShop = () => GAME.openXPShop();
+    window.closeXPShop = () => GAME.closeXPShop();
 
     window.addEventListener('load', init);
 })();

@@ -60,6 +60,13 @@
                     <p>• <b>Spikes:</b> Constant damage to anyone treading on them ($40).</p>
                     <p>• <b>Combat Drones:</b> Flying support <b>($250)</b>. Can <b>Follow</b>, <b>Stay</b>, or be <b>Manually Piloted</b> with <b>[I, J, K, L]</b>.</p>
                 </div>
+
+                <div class="manual-section">
+                    <h3>🌍 BIOMES & META PROGRESSION</h3>
+                    <p>• <b>Sectors:</b> Cycles every 5 waves: <b>Lab</b> (1-5) → <b>Desert</b> (6-10) → <b>Alien</b> (11-15) → repeat.</p>
+                    <p>• <b>Intel (XP):</b> Earn XP by surviving waves. Spend XP on persistent upgrades (Max HP, Move Speed, Crit Chance, Admin Drop Chance).</p>
+                    <p>• <b>Critical Hits:</b> 10% base chance to deal double damage on bullet hits.</p>
+                </div>
             </div>
             <button onclick="closeManual()" class="close-btn">LOCK AND LOAD!</button>
         </div>
@@ -148,6 +155,7 @@
                 <div class="icon">💣</div>
                 <div class="details"><span class="name">Grenade</span><span class="cost">$500</span></div>
             </div>
+            <button id="xp-shop-btn" onclick="GAME.openXPShop()" style="grid-column: 1 / -1; background: #d4ac0d; margin-bottom: 4px; font-size: 16px; padding: 10px;">⚡ INTEL UPGRADES (XP SHOP)</button>
             <button id="next-wave-btn" onclick="nextWave()">START NEXT WAVE</button>
         </div>
 
@@ -207,7 +215,16 @@
         <div id="game-over" class="hidden">
             <h1>YOU DIED</h1>
             <p>Survived <span id="final-wave">0</span> Waves</p>
-            <button onclick="location.reload()">TRY AGAIN</button>
+            <p id="xp-earned" style="color:#f1c40f;font-size:18px;margin:8px 0;"></p>
+            <button onclick="GAME.openXPShop()">⚡ SPEND XP</button>
+            <button onclick="location.reload()" style="margin-top:8px;">TRY AGAIN</button>
+        </div>
+
+        <div id="xp-shop" class="hidden">
+            <h2>⚡ INTEL UPGRADES</h2>
+            <div id="xp-display" style="font-size:20px;color:#f1c40f;margin-bottom:12px;">XP: 0</div>
+            <div id="xp-upgrades"></div>
+            <button onclick="GAME.closeXPShop()" class="close-btn" style="margin-top:16px;">CLOSE</button>
         </div>
 
         <div id="mobile-controls" class="hidden">
@@ -260,6 +277,7 @@
     <script src="namespace.js"></script>
     <script src="constants.js"></script>
     <script src="state.js"></script>
+    <script src="meta-state.js"></script>
     <script src="sound-manager.js"></script>
     <script src="ui.js"></script>
     <script src="render-map.js"></script>
