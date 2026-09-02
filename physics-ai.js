@@ -1,45 +1,4 @@
-// physics-ai.js — Zombie movement, smart pathfinding, wall breaching, and boss combat logic
-
-GAME.isSegmentBlockedByWall = function (x1, y1, x2, y2, w, padding = 15) {
-    const rot = w.rotation || 0;
-    const cos = Math.cos(-rot);
-    const sin = Math.sin(-rot);
-    const lx1 = (x1 - w.x) * cos - (y1 - w.y) * sin;
-    const ly1 = (x1 - w.x) * sin + (y1 - w.y) * cos;
-    const lx2 = (x2 - w.x) * cos - (y2 - w.y) * sin;
-    const ly2 = (x2 - w.x) * sin + (y2 - w.y) * cos;
-
-    const minX = -40 - padding, maxX = 40 + padding;
-    const minY = -10 - padding, maxY = 10 + padding;
-
-    let t0 = 0, t1 = 1;
-    const dx = lx2 - lx1, dy = ly2 - ly1;
-    const p = [-dx, dx, -dy, dy];
-    const q = [lx1 - minX, maxX - lx1, ly1 - minY, maxY - ly1];
-
-    for (let i = 0; i < 4; i++) {
-        if (p[i] === 0) {
-            if (q[i] < 0) return false;
-        } else {
-            const t = q[i] / p[i];
-            if (p[i] < 0) {
-                if (t > t1) return false;
-                if (t > t0) t0 = t;
-            } else {
-                if (t < t0) return false;
-                if (t < t1) t1 = t;
-            }
-        }
-    }
-    return t0 <= t1;
-};
-
-GAME.isPathBlocked = function (x1, y1, x2, y2, walls, padding = 15) {
-    for (let w of walls) {
-        if (GAME.isSegmentBlockedByWall(x1, y1, x2, y2, w, padding)) return true;
-    }
-    return false;
-};
+// physics-ai.js — Zombie movement, detour pathfinding, edge sliding, and boss behavior
 
 GAME.updateZombies = function (state, timestamp, scale) {
     const { zombies, player, walls, worldOpacity } = state;
@@ -67,28 +26,33 @@ GAME.updateZombies = function (state, timestamp, scale) {
         let angle = directAngle;
         const distToPlayer = Math.hypot(player.x - z.x, player.y - z.y);
 
+        // Track position to detect stuck states
+        const movedDist = Math.hypot(z.x - (z.lastX || z.x), z.y - (z.lastY || z.y));
+        z.lastX = z.x; z.lastY = z.y;
+        if (movedDist < 0.15) z.stuckTicks = (z.stuckTicks || 0) + 1;
+        else z.stuckTicks = Math.max(0, (z.stuckTicks || 0) - 1);
+
         // 2. Line of sight & detour pathfinding
-        if (!GAME.isPathBlocked(z.x, z.y, player.x, player.y, walls, (z.radius || 15) * 0.7)) {
-            // Direct path is unblocked: charge straight toward player
+        if (!GAME.isPathBlocked(z.x, z.y, player.x, player.y, walls, 6)) {
             angle = directAngle;
         } else {
-            // Path is blocked: look for detour angles around walls
-            const feelerDist = Math.min(180, distToPlayer);
-            const offsets = [0.45, -0.45, 0.9, -0.9, 1.35, -1.35, 1.8, -1.8];
+            // Test feeler rays to find open flank around walls
+            const feelerDist = Math.min(160, distToPlayer);
+            const offsets = [0.35, -0.35, 0.7, -0.7, 1.05, -1.05, 1.4, -1.4, 1.75, -1.75];
             let foundDetour = false;
 
             for (let off of offsets) {
                 const testAngle = directAngle + off;
                 const fx = z.x + Math.cos(testAngle) * feelerDist;
                 const fy = z.y + Math.sin(testAngle) * feelerDist;
-                if (!GAME.isPathBlocked(z.x, z.y, fx, fy, walls, (z.radius || 15) * 0.7)) {
+                if (!GAME.isPathBlocked(z.x, z.y, fx, fy, walls, 6)) {
                     angle = testAngle;
                     foundDetour = true;
                     break;
                 }
             }
             if (!foundDetour) {
-                // Player is boxed in! Ram directly into the blocking wall
+                // Boxed in or no clear path: head directly at wall
                 angle = directAngle;
             }
         }
@@ -138,7 +102,8 @@ GAME.updateZombies = function (state, timestamp, scale) {
         if (z.kbVx) { z.x += z.kbVx * scale; z.kbVx *= 0.85; if (Math.abs(z.kbVx) < 0.1) z.kbVx = 0; }
         if (z.kbVy) { z.y += z.kbVy * scale; z.kbVy *= 0.85; if (Math.abs(z.kbVy) < 0.1) z.kbVy = 0; }
 
-        // 4. Wall collision resolution & wall breaching
+        // 4. Wall collision resolution & smart tangential edge-sliding
+        let slideX = 0, slideY = 0;
         walls.forEach(w => {
             const rot = w.rotation || 0;
             const cos = Math.cos(rot), sin = Math.sin(rot);
@@ -149,19 +114,39 @@ GAME.updateZombies = function (state, timestamp, scale) {
 
             if (dist < z.radius) {
                 const overlap = z.radius - dist;
-                const nx = dist > 0.01 ? (lx - tx) / dist : 0;
-                const ny = dist > 0.01 ? (ly - ty) / dist : 1;
-                z.x += (nx * cos - ny * sin) * overlap;
-                z.y += (nx * sin + ny * cos) * overlap;
+                const nx = dist > 0.001 ? (lx - tx) / dist : 0;
+                const ny = dist > 0.001 ? (ly - ty) / dist : 1;
+                const wnx = nx * cos - ny * sin;
+                const wny = nx * sin + ny * cos;
 
-                // Deal damage to wall when attacking/colliding
-                w.hp -= (isDashingNow ? 3.0 : 0.8) * scale;
+                // Push out along normal
+                z.x += wnx * overlap;
+                z.y += wny * overlap;
+
+                // Smooth tangential sliding around corners
+                const t1x = -wny, t1y = wnx;
+                const t2x = wny, t2y = -wnx;
+                const toPlayerX = player.x - z.x, toPlayerY = player.y - z.y;
+                const bestTx = (t1x * toPlayerX + t1y * toPlayerY >= 0) ? t1x : t2x;
+                const bestTy = (t1x * toPlayerX + t1y * toPlayerY >= 0) ? t1y : t2y;
+                slideX += bestTx * (z.speed || 1) * 0.8 * scale;
+                slideY += bestTy * (z.speed || 1) * 0.8 * scale;
+
+                // Deal damage to wall
+                const stuckDmgBoost = (z.stuckTicks && z.stuckTicks > 10) ? 2.5 : 1.0;
+                w.hp -= (isDashingNow ? 4.0 : 1.0 * stuckDmgBoost) * scale;
                 if (w.hp <= 0) {
                     const idx = walls.indexOf(w);
                     if (idx !== -1) walls.splice(idx, 1);
                 }
             }
         });
+
+        // Apply edge slide
+        if (slideX !== 0 || slideY !== 0) {
+            z.x += slideX;
+            z.y += slideY;
+        }
 
         // 5. Solid hazard collision
         if (state.hazards) {

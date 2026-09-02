@@ -14,6 +14,7 @@ describe('Physics Engine', () => {
         global.loadScript('physics-hazards.js');
         global.loadScript('physics-collision.js');
         global.loadScript('physics-shooter-ai.js');
+        global.loadScript('physics-pathfinding.js');
         global.loadScript('physics-ai.js');
         global.loadScript('physics-entities.js');
         global.loadScript('physics.js');
@@ -115,5 +116,22 @@ describe('Physics Engine', () => {
 
         GAME.updateZombies(mockState, Date.now(), 1.0);
         expect(wall.hp).toBeLessThan(100);
+    });
+
+    it('should smoothly slide zombies around wall corners toward player', () => {
+        // Wall at (200, 200), horizontal [-40 to +40, -10 to +10]
+        const wall = { x: 200, y: 200, rotation: 0, hp: 100, maxHp: 100 };
+        // Zombie at top edge of wall (200, 185) with player at (350, 200) to the right
+        const zombie = { x: 200, y: 185, radius: 18, speed: 2, type: 'normal', hp: 50 };
+        const mockState = {
+            zombies: [zombie],
+            player: { x: 350, y: 200, hp: 100, maxHp: 100 },
+            walls: [wall],
+            worldOpacity: 1
+        };
+
+        GAME.updateZombies(mockState, Date.now(), 1.0);
+        // Zombie should slide rightward (+X) toward the player along the wall face/edge
+        expect(zombie.x).toBeGreaterThan(200);
     });
 });
