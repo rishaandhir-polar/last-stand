@@ -38,6 +38,7 @@ GAME.updatePhysics = function (state, timestamp, dt) {
     GAME.updateItems(state, scale);
     GAME.updateTurrets(state, timestamp, scale);
     GAME.updateDrones(state, timestamp, scale);
+    if (GAME.updateHazards) GAME.updateHazards(state, scale);
     GAME.updateGrenades(state, timestamp, scale);
     GAME.updateTraps(state, scale);
     GAME.updateSystemItems(state, timestamp);

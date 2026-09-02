@@ -54,6 +54,9 @@ GAME.nextWave = function (state) {
     // Roll for admin weapon drop from meta progression
     GAME.rollAdminWeaponDrop(state);
 
+    // Generate biome-specific interactive hazards/barrels
+    if (GAME.generateHazards) GAME.generateHazards(state);
+
     // Notify on biome transitions
     const biome = GAME.getBiome(state.wave);
     const prevBiome = GAME.getBiome(state.wave - 1);

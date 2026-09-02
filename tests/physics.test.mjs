@@ -11,7 +11,9 @@ describe('Physics Engine', () => {
         global.loadScript('ui.js');
         global.loadScript('physics-spawn.js');
         global.loadScript('physics-core.js');
+        global.loadScript('physics-hazards.js');
         global.loadScript('physics-collision.js');
+        global.loadScript('physics-shooter-ai.js');
         global.loadScript('physics-ai.js');
         global.loadScript('physics-entities.js');
         global.loadScript('physics.js');
@@ -91,5 +93,27 @@ describe('Physics Engine', () => {
         GAME.updateZombies(mockState, Date.now(), 1.0);
         expect(boss.color).toBe('#c0392b');
         expect(boss.speed).toBeGreaterThan(1.5);
+    });
+
+    it('should detect when line of sight is blocked by a wall and when unblocked', () => {
+        const wall = { x: 200, y: 200, rotation: 0, hp: 100, maxHp: 100 };
+        // Segment going through wall (100,200) to (300,200)
+        expect(GAME.isPathBlocked(100, 200, 300, 200, [wall])).toBe(true);
+        // Segment clear of wall (100,100) to (300,100)
+        expect(GAME.isPathBlocked(100, 100, 300, 100, [wall])).toBe(false);
+    });
+
+    it('should damage walls when zombies collide with them', () => {
+        const wall = { x: 100, y: 100, rotation: 0, hp: 100, maxHp: 100 };
+        const zombie = { x: 100, y: 100, radius: 20, speed: 1, type: 'normal', hp: 50 };
+        const mockState = {
+            zombies: [zombie],
+            player: { x: 500, y: 500, hp: 100, maxHp: 100 },
+            walls: [wall],
+            worldOpacity: 1
+        };
+
+        GAME.updateZombies(mockState, Date.now(), 1.0);
+        expect(wall.hp).toBeLessThan(100);
     });
 });

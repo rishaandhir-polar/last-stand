@@ -18,20 +18,22 @@
         GAME.openManual(state);
         GAME.updateHUD(state);
 
-        // Auto-Update Logic
+        // Auto-Update Logic (only when served via HTTP/HTTPS)
         GAME.currentVersion = "1.0.6";
         const checkForUpdates = async () => {
+            if (!location.protocol.startsWith('http')) return;
             try {
                 const response = await fetch('app-version.json?t=' + Date.now());
                 const data = await response.json();
-                // Only update if the server version is strictly GREATER than current
                 if (data.version && data.version > GAME.currentVersion) {
                     GAME.showNotification("UPDATE FOUND", "Installing new version...");
                     setTimeout(() => location.reload(), 2000);
                 }
             } catch (e) { /* silent fail */ }
         };
-        setInterval(checkForUpdates, 30000); // Check every 30s
+        if (location.protocol.startsWith('http')) {
+            setInterval(checkForUpdates, 30000);
+        }
 
         window.addEventListener('player-shoot', (e) => GAME.shoot(state, e.detail?.timestamp || performance.now()));
         window.addEventListener('place-build', () => GAME.placeBuild(state));

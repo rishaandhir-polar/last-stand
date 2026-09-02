@@ -9,6 +9,7 @@ GAME.draw = function (state) {
 
     GAME.drawMap(ctx, canvas, walls, state.wave);
     GAME.drawGroundTraps(ctx, state);
+    if (GAME.drawHazards) GAME.drawHazards(ctx, state);
     GAME.drawEntities(ctx, state);
     GAME.drawTopFX(ctx, state);
     if (state.buildMode) GAME.drawBuildGhost(ctx, state);
